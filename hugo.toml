@@ -81,6 +81,7 @@ description = "codersgl's blog"
 mainSections = ["posts"]
 featuredImageField = "image"
 featuredImage = true
+favicon = '/blog/favicon.ico'
 
 # 配色方案
 [params.colorscheme]
@@ -97,10 +98,11 @@ displayLogo = false
 [params.sidebar]
 emoji = "🍥"
 subtitle = "Lorem ipsum dolor sit amet, consectetur adipiscing elit."
+
 [params.sidebar.avatar]
 enabled = true
 local = true
-src = "img/avatar.png"
+src = "images/avatar.jpg"
 
 # 文章页面
 [params.article]
