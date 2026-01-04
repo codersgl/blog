@@ -1,4 +1,24 @@
 baseURL = 'https://example.org/'
-languageCode = 'en-us'
-title = 'My New Hugo Site'
+# 1. 语言编码：简体中文（中国），替代原有 en-us
+# 可选值：zh-cn（推荐，中国简体中文）、zh-hans（简体中文，通用）
+languageCode = "zh-cn"
+
+# 2. 默认内容语言：中文（对应内容文件中的 lang 字段）
+defaultContentLanguage = "zh"
+
+# 3. 中国时区：解决日期时间显示偏差（关键，替代默认的 UTC 时区）
+timeZone = "Asia/Shanghai"
+
+# 4. 站点标题（可选，改为中文）
+title = "codersgl"
+
+# 5. 中文排版优化（关键：解决中文与英文/数字之间无空格、自动断行问题）
+hasCJKLanguage = true
+
+# 6. theme
 theme = 'hugo-theme-stack'
+
+
+[caches]
+  [caches.images]
+    dir = ':cacheDir/images'
