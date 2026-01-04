@@ -2,35 +2,35 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
-    <loc>https://codersgl.github.io/blog/</loc>
+    <loc>http://localhost:1313/blog/</loc>
     <lastmod>2026-01-04T14:41:42+08:00</lastmod>
   </url><url>
-    <loc>https://codersgl.github.io/blog/posts/my-first-post/</loc>
+    <loc>http://localhost:1313/blog/posts/my-first-post/</loc>
     <lastmod>2026-01-04T14:41:42+08:00</lastmod>
   </url><url>
-    <loc>https://codersgl.github.io/blog/posts/</loc>
+    <loc>http://localhost:1313/blog/posts/</loc>
     <lastmod>2026-01-04T14:41:42+08:00</lastmod>
   </url><url>
-    <loc>https://codersgl.github.io/blog/page/links/</loc>
+    <loc>http://localhost:1313/blog/page/links/</loc>
   </url><url>
-    <loc>https://codersgl.github.io/blog/page/archives/</loc>
+    <loc>http://localhost:1313/blog/page/archives/</loc>
   </url><url>
-    <loc>https://codersgl.github.io/blog/categories/assignments/</loc>
+    <loc>http://localhost:1313/blog/categories/assignments/</loc>
   </url><url>
-    <loc>https://codersgl.github.io/blog/categories/</loc>
+    <loc>http://localhost:1313/blog/categories/</loc>
   </url><url>
-    <loc>https://codersgl.github.io/blog/categories/codes/</loc>
+    <loc>http://localhost:1313/blog/categories/codes/</loc>
   </url><url>
-    <loc>https://codersgl.github.io/blog/categories/linux/</loc>
+    <loc>http://localhost:1313/blog/categories/linux/</loc>
   </url><url>
-    <loc>https://codersgl.github.io/blog/page/</loc>
+    <loc>http://localhost:1313/blog/page/</loc>
   </url><url>
-    <loc>https://codersgl.github.io/blog/page/search/</loc>
+    <loc>http://localhost:1313/blog/page/search/</loc>
   </url><url>
-    <loc>https://codersgl.github.io/blog/tags/</loc>
+    <loc>http://localhost:1313/blog/tags/</loc>
   </url><url>
-    <loc>https://codersgl.github.io/blog/categories/tools/</loc>
+    <loc>http://localhost:1313/blog/categories/tools/</loc>
   </url><url>
-    <loc>https://codersgl.github.io/blog/categories/tutorials/</loc>
+    <loc>http://localhost:1313/blog/categories/tutorials/</loc>
   </url>
 </urlset>
