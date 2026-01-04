@@ -37,6 +37,17 @@ mainSections = ["posts"] # 关键：指定主题抓取 posts 目录下的内容�
 featuredImageField = "image"
 featuredImage = true
 
+
+[menu]
+[[menu.main]]
+    name = "Home"
+    url = "/"
+    weight = 10
+    identifier = "home"
+    [menu.main.params]
+        icon = "home"
+        newTab = true
+
 [params.navbar]
 logo = ""
 displayTitle = true
