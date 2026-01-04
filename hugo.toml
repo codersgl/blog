@@ -26,3 +26,22 @@ dir = ':cacheDir/images'
 
 [pagination]
 pagerSize = 5
+
+# 新增：Stack 主题的基础配置（确保帖子列表正常显示）
+[params]
+# 站点描述
+description = "你的站点描述"
+# 启用博客功能
+mainSections = ["posts"] # 关键：指定主题抓取 posts 目录下的内容作为博客列表
+# 其他可选配置（根据 Stack 主题文档补充）
+featuredImageField = "image"
+featuredImage = true
+
+[params.navbar]
+logo = ""
+displayTitle = true
+displayLogo = false
+
+[params.footer]
+displayCopyright = true
+copyright = "© 2026 codersgl"
