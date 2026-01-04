@@ -21,11 +21,11 @@ taxonomy = ['html']
 term = ['html']
 
 [pagination]
-pagerSize = 5
+pagerSize = 8
 
-[permalinks]
-post = "/p/:slug/"
-page = "/:slug/"
+[taxonomies]
+genre = 'categories'
+tag = 'tags'
 
 # =====================================================================================
 # 缓存与服务 (Caches & Services)
@@ -65,8 +65,8 @@ tabWidth = 4
 [menu]
 main = [
     { name = '首页', url = '/', weight = 1, identifier = 'home', params = { icon = 'home', newTab = false } },
-    { name = '归档', url = '/archives/', weight = 2, identifier = 'archive', params = { icon = 'archives', newTab = false } },
-    { name = '友链', url = '/links/', weight = 3, identifier = 'links', params = { icon = 'link', newTab = false } },
+    { name = '归档', url = '/page/archives', weight = 2, identifier = 'archive', params = { icon = 'archives', newTab = false } },
+    { name = '友链', url = '/page/links', weight = 3, identifier = 'links', params = { icon = 'link', newTab = false } },
 ]
 
 social = [
@@ -104,6 +104,10 @@ enabled = true
 local = true
 src = "images/avatar.jpg"
 
+[params.imageprocessing]
+cover = { enabled = false }
+content = { enabled = false }
+
 # 文章页面
 [params.article]
 math = false
@@ -126,11 +130,12 @@ lastUpdated = "Jan 02, 2006 15:04 MST"
 # 小组件 (Widgets)
 [params.widgets]
 homepage = [
-    { type = "search" },
-    { type = "archives", params = { limit = 5 } },
-    { type = "categories", params = { limit = 10 } },
-    { type = "tag-cloud", params = { limit = 10 } },
+    { type = 'search' },
+    { type = 'archives', params = { limit = 10 } },
+    { type = 'categories', params = { limit = 10 } },
+    { type = 'tag-cloud', params = { limit = 20 } },
 ]
+
 page = [
     { type = 'search' },
     { type = 'toc' },
