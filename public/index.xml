@@ -15,14 +15,6 @@
         <description>&lt;p&gt;这是一篇测试博客，阅后即焚！！！&lt;/p&gt;
 </description>
         </item>
-        <item>
-        <title>友链</title>
-        <link>http://localhost:1313/blog/links/</link>
-        <pubDate>Sun, 05 Jan 2025 00:00:00 +0800</pubDate>
-        
-        <guid>http://localhost:1313/blog/links/</guid>
-        <description></description>
-        </item>
         
     </channel>
 </rss>
