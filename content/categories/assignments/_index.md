@@ -1,7 +1,7 @@
 ---
 title: Assignments
 description: 课程作业
-image: image.jpg
+image: image.png
 
 style:
   background: "#dd7777"
