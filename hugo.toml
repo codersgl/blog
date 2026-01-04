@@ -22,3 +22,7 @@ theme = 'hugo-theme-stack'
 [caches]
 [caches.images]
 dir = ':cacheDir/images'
+
+
+[pagination]
+pagerSize = 5
