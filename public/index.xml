@@ -1,19 +1,27 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
     <channel>
-        <title>codersgl</title>
-        <link>https://codersgl.github.io/blog/</link>
-        <description>Recent content on codersgl</description>
+        <title>codersgl&#39;s blog</title>
+        <link>http://localhost:1313/blog/</link>
+        <description>Recent content on codersgl&#39;s blog</description>
         <generator>Hugo -- gohugo.io</generator>
         <language>zh-Hans</language>
-        <lastBuildDate>Sun, 04 Jan 2026 14:41:42 +0800</lastBuildDate><atom:link href="https://codersgl.github.io/blog/index.xml" rel="self" type="application/rss+xml" /><item>
+        <lastBuildDate>Sun, 04 Jan 2026 14:41:42 +0800</lastBuildDate><atom:link href="http://localhost:1313/blog/index.xml" rel="self" type="application/rss+xml" /><item>
         <title>My First Post</title>
-        <link>https://codersgl.github.io/blog/posts/my-first-post/</link>
+        <link>http://localhost:1313/blog/posts/my-first-post/</link>
         <pubDate>Sun, 04 Jan 2026 14:41:42 +0800</pubDate>
         
-        <guid>https://codersgl.github.io/blog/posts/my-first-post/</guid>
+        <guid>http://localhost:1313/blog/posts/my-first-post/</guid>
         <description>&lt;p&gt;这是一篇测试博客，阅后即焚！！！&lt;/p&gt;
 </description>
+        </item>
+        <item>
+        <title>友链</title>
+        <link>http://localhost:1313/blog/links/</link>
+        <pubDate>Sun, 05 Jan 2025 00:00:00 +0800</pubDate>
+        
+        <guid>http://localhost:1313/blog/links/</guid>
+        <description></description>
         </item>
         
     </channel>

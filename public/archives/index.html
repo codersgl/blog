@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="zh-Hans" dir="ltr">
+    <head><script src="/blog/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=blog/livereload" data-no-instant defer></script><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content="">
+<title>codersgl&#39;s blog</title>
+
+<link rel='canonical' href='http://localhost:1313/blog/archives/'>
+
+<link rel="stylesheet" href="/blog/scss/style.min.833d6eed45de56f48306bf57268d5b8cdfc8a60e8e7bdc99810464fcd033f7c6.css"><meta property='og:title' content="codersgl's blog">
+<meta property='og:description' content="">
+<meta property='og:url' content='http://localhost:1313/blog/archives/'>
+<meta property='og:site_name' content='codersgl&#39;s blog'>
+<meta property='og:type' content='article'><meta property='article:section' content='Page' />
+<meta name="twitter:title" content="codersgl's blog">
+<meta name="twitter:description" content=""><link rel="stylesheet" href="/blog/fonts/LXGW/lxgw.css" />
+<style>
+    @font-face {
+        font-family: 'MapleMonoNF';
+        src: url(/blog/fonts/MapleMono-NF-Regular.ttf);
+    }
+
+    :root {
+        --sys-font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Droid Sans', 'Helvetica Neue';
+        --zh-font-family: 'LXGW WenKai', 'PingFang SC', 'Hiragino Sans GB', 'Droid Sans Fallback', 'Microsoft YaHei';
+        --base-font-family: 'LXGW WenKai', 'Lato', var(--sys-font-family), var(--zh-font-family), sans-serif;
+        --code-font-family: MapleMonoNF, 'LXGW WenKai', Menlo, Monaco, Consolas, 'Courier New', var(--zh-font-family),
+            monospace;
+    }
+
+     
+    .highlight {
+        font-size: 0.9em;
+    }
+
+     
+    .caption {
+        color: gray;
+        font-size: 0.8em;
+    }
+
+    .article-content .gallery {
+        margin: 0;
+        width: 100%;
+    }
+
+     
+    .menu-social li {
+        margin-right: 0.4em;
+    }
+
+     
+    .has-image .article-details:not(:has(.article-time)) {
+        background: unset !important;
+        background-color: rgba(0, 0, 0, 0.3) !important;
+    }
+
+     
+    .has-image:has(.article-header) {
+        border: 1px solid gray;
+    }
+
+    .article-subtitle {
+        font-size: 1em;
+        margin-top: 1em;
+    }
+
+     
+    .related-content article .article-title {
+        font-size: 1em;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    .article-page .main-article .article-header .article-details {
+        padding-bottom: 25px;
+    }
+</style>
+<script>
+    class FriendlyLink extends HTMLElement {
+        connectedCallback() {
+            const shadow = this.attachShadow({mode: 'open'});
+
+            const src = this.getAttribute('src') || undefined;
+            const title = this.getAttribute('title') || undefined;
+            const description = this.getAttribute('desc') || undefined;
+
+            shadow.innerHTML = `<style>
+                .friend-link-card {
+                    background-color: var(--card-bg-color);
+                    border-radius: 8px;
+                    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+                    transition:
+                        transform 0.2s ease,
+                        box-shadow 0.2s ease;
+                    overflow: hidden;
+                }
+
+                .friend-link-card:hover {
+                    transform: translateY(-5px);
+                    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+                }
+
+                .friend-link-card a {
+                    text-decoration: none;
+                    color: inherit;
+                    display: block;
+                    padding: 15px;
+                }
+
+                .friend-link-info {
+                    padding: 10px 0;
+                }
+
+                .friend-link-name {
+                    margin: 0;
+                    font-size: 1.2em;
+                    color: var(--card-title-color);
+                }
+
+                .friend-link-description {
+                    margin: 5px 0 0;
+                    font-size: 0.9em;
+                    color: var(--card-text-color);
+                }
+            </style>
+            <div class="friend-link-card">
+                <a href="${src}" target="_blank" rel="noopener noreferrer">
+                    <div class="friend-link-info">
+                    <h3 class="friend-link-name">${title}</h3>
+                    <p class="friend-link-description">${description}</p>
+                    </div>
+                </a>
+            </div>`;
+        }
+    }
+
+    customElements.define('friendly-link', FriendlyLink);
+
+</script>
+
+    </head>
+    <body class="template-archives">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "light");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex on-phone--column extended"><aside class="sidebar left-sidebar sticky ">
+    <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="切换菜单">
+        <span class="hamburger-box">
+            <span class="hamburger-inner"></span>
+        </span>
+    </button>
+
+    <header>
+        
+            
+            <figure class="site-avatar">
+                <a href="/blog/">
+                
+                    
+                    
+                    
+                        
+                        <img src="/blog/img/avatar_hu_f509edb42ecc0ebd.png" width="300"
+                            height="300" class="site-logo" loading="lazy" alt="Avatar">
+                    
+                
+                </a>
+                
+                    <span class="emoji">🍥</span>
+                
+            </figure>
+            
+        
+        
+        <div class="site-meta">
+            <h1 class="site-name"><a href="/blog">codersgl&#39;s blog</a></h1>
+            <h2 class="site-description">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</h2>
+        </div>
+    </header><ol class="menu-social">
+            
+                <li>
+                    <a 
+                        href='https://github.com/codersgl'
+                        target="_blank"
+                        title="GitHub 主页"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-github" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M9 19c-4.3 1.4 -4.3 -2.5 -6 -3m12 5v-3.5c0 -1 .1 -1.4 -.5 -2c2.8 -.3 5.5 -1.4 5.5 -6a4.6 4.6 0 0 0 -1.3 -3.2a4.2 4.2 0 0 0 -.1 -3.2s-1.1 -.3 -3.5 1.3a12.3 12.3 0 0 0 -6.2 0c-2.4 -1.6 -3.5 -1.3 -3.5 -1.3a4.2 4.2 0 0 0 -.1 3.2a4.6 4.6 0 0 0 -1.3 3.2c0 4.6 2.7 5.7 5.5 6c-.6 .6 -.6 1.2 -.5 2v3.5" />
+</svg>
+
+
+
+                        
+                    </a>
+                </li>
+            
+                <li>
+                    <a 
+                        href='/blog/index.xml'
+                        
+                        title="RSS 订阅"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-rss" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="5" cy="19" r="1" />
+  <path d="M4 4a16 16 0 0 1 16 16" />
+  <path d="M4 11a9 9 0 0 1 9 9" />
+</svg>
+
+
+
+                        
+                    </a>
+                </li>
+            
+        </ol><ol class="menu" id="main-menu">
+        
+        
+        
+        <li >
+            <a href='/blog/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-home" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <polyline points="5 12 3 12 12 3 21 12 19 12" />
+  <path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7" />
+  <path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6" />
+</svg>
+
+
+
+                
+                <span>首页</span>
+            </a>
+        </li>
+        
+        
+        <li  class='current' >
+            <a href='/blog/archives/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-archive" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <rect x="3" y="4" width="18" height="4" rx="2" />
+  <path d="M5 8v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-10" />
+  <line x1="10" y1="12" x2="14" y2="12" />
+</svg>
+
+
+
+                
+                <span>归档</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/blog/links/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-link" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M10 14a3.5 3.5 0 0 0 5 0l4 -4a3.5 3.5 0 0 0 -5 -5l-.5 .5" />
+  <path d="M14 10a3.5 3.5 0 0 0 -5 0l-4 4a3.5 3.5 0 0 0 5 5l.5 -.5" />
+</svg>
+
+
+
+                
+                <span>友链</span>
+            </a>
+        </li>
+        
+        <li class="menu-bottom-section">
+            <ol class="menu">
+
+                
+                    <li id="dark-mode-toggle">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="8" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="16" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <span>暗色模式</span>
+                    </li>
+                
+            </ol>
+        </li>
+    </ol>
+</aside>
+
+            <main class="main full-width">
+    <header>
+    </header>
+
+    
+    
+
+    
+    
+    <div class="archives-group" id="2026">
+        <h2 class="archives-date section-title"><a href="/blog/archives/#2026">2026</a></h2>
+        <div class="article-list--compact">
+            
+                <article>
+    <a href="/blog/posts/my-first-post/">
+        <div class="article-details">
+            <h2 class="article-title">My First Post</h2>
+            <footer class="article-time">
+                <time datetime='2026-01-04T14:41:42&#43;08:00'>Jan 04, 2026</time>
+            </footer>
+        </div>
+    </a>
+</article>
+            
+        </div>
+    </div>
+    
+
+    
+<footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+        2026 codersgl&#39;s blog
+    </section>
+    
+    <section class="powerby">
+        
+    </section>
+</footer>
+
+
+            </main>
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.6/dist/vibrant.min.js"integrity="sha256-awcR2jno4kI5X0zL8ex0vi2z&#43;KMkF24hUW8WePSA9HM="crossorigin="anonymous"
+                
+                >
+            </script><script type="text/javascript" src="/blog/ts/main.0db9d3bb15612717eccfcda01bdb204577ec88d4b25414e101d6a0c6df939201.js" defer></script>
+
+
+    </body>
+</html>

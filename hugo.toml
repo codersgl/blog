@@ -1,80 +1,99 @@
+# =====================================================================================
+# 基础配置 (Basic Configuration)
+# =====================================================================================
 baseURL = 'https://codersgl.github.io/blog/'
-# 1. 语言编码：简体中文（中国），替代原有 en-us
-# 可选值：zh-cn（推荐，中国简体中文）、zh-hans（简体中文，通用）
-languageCode = "zh-Hans"
-
-# 2. 默认内容语言：中文（对应内容文件中的 lang 字段）
-defaultContentLanguage = "zh-cn"
-
-# 3. 中国时区：解决日期时间显示偏差（关键，替代默认的 UTC 时区）
-timeZone = "Asia/Shanghai"
-
-# 4. 站点标题（可选，改为中文）
-title = "codersgl"
-
-# 5. 中文排版优化（关键：解决中文与英文/数字之间无空格、自动断行问题）
-hasCJKLanguage = true
-
-# 6. theme
+title = "codersgl's blog"
 theme = 'hugo-theme-stack'
 
+# 语言与时区
+languageCode = "zh-Hans"         # 语言编码：简体中文（中国）
+defaultContentLanguage = "zh-cn" # 默认内容语言
+timeZone = "Asia/Shanghai"       # 时区：上海
+hasCJKLanguage = true            # 中文排版优化
 
-# 缓存配置
-[caches]
+# =====================================================================================
+# 输出与链接 (Outputs & Permalinks)
+# =====================================================================================
+[outputs]
+home = ['html', 'rss']
+section = ['html']
+taxonomy = ['html']
+term = ['html']
+
+[pagination]
+pagerSize = 5
+
+[permalinks]
+post = "/p/:slug/"
+page = "/:slug/"
+
+# =====================================================================================
+# 缓存与服务 (Caches & Services)
+# =====================================================================================
 [caches.images]
 dir = ':cacheDir/images'
 
-
-# 第三方服务配置
 [services]
 # [services.disqus]
 #     shortname = "your-disqus-shortname"
 # [services.googleAnalytics]
 #     id = "your-google-analytics-id"
 
-# 分页配置
-[pagination]
-pagerSize = 5
+# =====================================================================================
+# 标记语言配置 (Markup)
+# =====================================================================================
+[markup.goldmark.renderer]
+unsafe = true
 
-# 永久链接配置
-[permalinks]
-post = "/p/:slug/"
-page = "/:slug/"
+[markup.tableOfContents]
+startLevel = 2
+endLevel = 4
+ordered = false
 
-# 新增：Stack 主题的基础配置（确保帖子列表正常显示）
+[markup.highlight]
+noClasses = false
+codeFences = true
+guessSyntax = true
+lineNoStart = 1
+lineNos = true
+lineNumbersInTable = true
+tabWidth = 4
+
+# =====================================================================================
+# 菜单配置 (Menu)
+# =====================================================================================
+[menu]
+main = [
+    { name = '首页', url = '/', weight = 1, identifier = 'home', params = { icon = 'home', newTab = false } },
+    { name = '归档', url = '/archives/', weight = 2, identifier = 'archive', params = { icon = 'archives', newTab = false } },
+    { name = '友链', url = '/links/', weight = 3, identifier = 'links', params = { icon = 'link', newTab = false } },
+]
+
+social = [
+    { identifier = 'github', name = 'GitHub 主页', url = 'https://github.com/codersgl', params = { icon = 'brand-github', newTab = true } },
+    { identifier = 'rss', name = 'RSS 订阅', url = '/index.xml', params = { icon = 'rss', newTab = false } },
+]
+# =====================================================================================
+# 主题参数配置 (Theme Parameters)
+# =====================================================================================
 [params]
-# 站点描述
 description = "codersgl's blog"
-# 启用博客功能
-mainSections = ["posts"] # 关键：指定主题抓取 posts 目录下的内容作为博客列表
-# 其他可选配置（根据 Stack 主题文档补充）
+mainSections = ["posts"]
 featuredImageField = "image"
 featuredImage = true
 
+# 配色方案
+[params.colorscheme]
+toggle = true
+default = 'light'
 
-# 菜单配置
-[menu]
-[[menu.main]]
-name = "Home"
-url = "/"
-weight = 10
-identifier = "home"
-[menu.main.params]
-icon = "home"
-newTab = true
-
-# 顶部导航栏配置
+# 顶部导航栏
 [params.navbar]
 logo = ""
 displayTitle = true
 displayLogo = false
 
-# 页脚配置
-[params.footer]
-displayCopyright = true
-copyright = "© 2026 codersgl"
-
-# 侧边栏配置
+# 侧边栏
 [params.sidebar]
 emoji = "🍥"
 subtitle = "Lorem ipsum dolor sit amet, consectetur adipiscing elit."
@@ -83,7 +102,7 @@ enabled = true
 local = true
 src = "img/avatar.png"
 
-# 文章页面配置
+# 文章页面
 [params.article]
 math = false
 toc = true
@@ -92,12 +111,17 @@ readingTime = true
 enabled = true
 default = "Licensed under CC BY-NC-SA 4.0"
 
-# 日期格式配置
+# 页脚
+[params.footer]
+displayCopyright = true
+copyright = "© 2026 codersgl"
+
+# 日期格式
 [params.dateFormat]
 published = "Jan 02, 2006"
 lastUpdated = "Jan 02, 2006 15:04 MST"
 
-# 小组件配置
+# 小组件 (Widgets)
 [params.widgets]
 homepage = [
     { type = "search" },
@@ -105,12 +129,24 @@ homepage = [
     { type = "categories", params = { limit = 10 } },
     { type = "tag-cloud", params = { limit = 10 } },
 ]
-page = [{ type = "toc" }]
+page = [
+    { type = 'search' },
+    { type = 'toc' },
+    { type = 'categories', params = { limit = 10 } },
+    { type = 'tag-cloud', params = { limit = 20 } },
+]
 
-# 社交链接菜单
-[[menu.social]]
-identifier = "github"
-name = "GitHub"
-url = "https://github.com/codersgl"
-[menu.social.params]
-icon = "brand-github"
+# 评论系统 (Comments)
+[params.comments]
+enabled = true
+provider = 'waline'
+[params.comments.waline]
+serverURL = 'https://comment.shaobin-jiang.com'
+lang = 'zh-CN'
+emoji = [
+    'https://cdn.jsdelivr.net/gh/walinejs/emojis/bmoji',
+    'https://cdn.jsdelivr.net/gh/walinejs/emojis/bilibili',
+    'https://cdn.jsdelivr.net/gh/walinejs/emojis/tieba',
+]
+imageUploader = false
+requiredMeta = ["nick", "mail"]

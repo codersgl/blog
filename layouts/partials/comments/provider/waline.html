@@ -1,0 +1,44 @@
+<script src='https://unpkg.com/@waline/client@v2/dist/waline.js'></script>
+<link href='https://unpkg.com/@waline/client@v2/dist/waline.css' rel='stylesheet'/>
+
+<div id="waline-template"></div>
+<style>
+    .waline-container {
+        background-color: var(--card-background);
+        border-radius: var(--card-border-radius);
+        box-shadow: var(--shadow-l1);
+        padding: var(--card-padding);
+        --waline-font-size: var(--article-font-size);
+    }
+    .waline-container .wl-count {
+        color: var(--card-text-color-main);
+    }
+</style>
+
+{{- with .Site.Params.comments.waline -}}
+{{- $config := dict "el" "#waline" "dark" `html[data-scheme="dark"]` -}}
+{{- $replaceKeys := dict "serverurl" "serverURL" "requiredmeta" "requiredMeta" "wordlimit" "wordLimit" "pagesize" "pageSize" "imageuploader" "imageUploader" "texrenderer" "texRenderer" -}}
+
+{{- range $key, $val := . -}}
+    {{- if ne $val nil -}}  
+        {{- $replaceKey := index $replaceKeys $key -}}
+        {{- $k := default $key $replaceKey -}}
+
+        {{- $config = merge $config (dict $k $val) -}}
+    {{- end -}}
+{{- end -}}
+
+<script>
+    let classifier = window.location.pathname.replace(/\/$/, '');
+    if (classifier.indexOf('/blog/posts') == 0) {
+        let _waline_container = document.querySelector('#waline-template');
+        _waline_container.id = 'waline';
+        _waline_container.className = 'waline-container';
+
+        /// Waline client configuration see: https://waline.js.org/en/reference/client.html
+        let _waline_config = {{ $config | jsonify | safeJS }};
+        _waline_config.path = classifier;
+        Waline.init(_waline_config);
+    }
+</script>
+{{- end -}}
