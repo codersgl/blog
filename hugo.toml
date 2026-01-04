@@ -1,4 +1,4 @@
-baseURL = 'https://example.org/'
+baseURL = 'https://codersgl.github.io/blog/'
 # 1. 语言编码：简体中文（中国），替代原有 en-us
 # 可选值：zh-cn（推荐，中国简体中文）、zh-hans（简体中文，通用）
 languageCode = "zh-cn"
@@ -20,5 +20,5 @@ theme = 'hugo-theme-stack'
 
 
 [caches]
-  [caches.images]
-    dir = ':cacheDir/images'
+[caches.images]
+dir = ':cacheDir/images'
