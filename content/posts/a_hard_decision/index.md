@@ -2,6 +2,7 @@
 date = '2026-01-06T00:07:21+08:00'
 draft = false
 title = '一个艰难的决定'
+image = 'cover.jpg'
 categories = 'Jotting'
 tags = ["neovim"]
 +++
