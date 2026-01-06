@@ -97,7 +97,7 @@ displayLogo = false
 # 侧边栏
 [params.sidebar]
 emoji = "🍥"
-subtitle = "Lorem ipsum dolor sit amet, consectetur adipiscing elit."
+subtitle = "Imagination is the source of all motivation."
 
 [params.sidebar.avatar]
 enabled = true

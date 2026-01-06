@@ -3,6 +3,7 @@ date = '2026-01-06T17:52:23+08:00'
 draft = false
 title = 'VSCode中配置C/C++运行和调试环境'
 categories = 'tools'
+image = 'cover.jpeg'
 tags = ['C/C++'] 
 +++
 

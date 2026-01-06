@@ -1,0 +1,1140 @@
+<!DOCTYPE html>
+<html lang="zh-Hans" dir="ltr">
+    <head><script src="/blog/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=blog/livereload" data-no-instant defer></script><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content="前情提要 导师让我发一篇期刊，参考论文和代码都有，让我改。时间所剩不多大概两个礼拜。不管怎样，先拆解一下任务。\n改代码 写论文 改代码 主要的修改思路是修改特征提取部分，让模型提取更多的语义信息以期提高模型的整体性能。具体来说是在原特征提取分支的基础上添加两个特征提取分支SAW2和Dinov2。听起来挺简单的，但具体操作还是不容易。先分析原始特征提取分支的输入输出吧。\n">
+<title>codersgl&#39;s blog</title>
+
+<link rel='canonical' href='http://localhost:1313/blog/posts/my_first_essay/'>
+
+<link rel="stylesheet" href="/blog/scss/style.min.833d6eed45de56f48306bf57268d5b8cdfc8a60e8e7bdc99810464fcd033f7c6.css"><meta property='og:title' content="codersgl's blog">
+<meta property='og:description' content="前情提要 导师让我发一篇期刊，参考论文和代码都有，让我改。时间所剩不多大概两个礼拜。不管怎样，先拆解一下任务。\n改代码 写论文 改代码 主要的修改思路是修改特征提取部分，让模型提取更多的语义信息以期提高模型的整体性能。具体来说是在原特征提取分支的基础上添加两个特征提取分支SAW2和Dinov2。听起来挺简单的，但具体操作还是不容易。先分析原始特征提取分支的输入输出吧。\n">
+<meta property='og:url' content='http://localhost:1313/blog/posts/my_first_essay/'>
+<meta property='og:site_name' content='codersgl&#39;s blog'>
+<meta property='og:type' content='article'><meta property='article:section' content='Posts' /><meta property='article:published_time' content='2026-01-06T18:55:14&#43;08:00'/><meta property='article:modified_time' content='2026-01-06T18:55:14&#43;08:00'/><meta property='og:image' content='http://localhost:1313/blog/posts/my_first_essay/cover.jpeg' />
+<meta name="twitter:title" content="codersgl's blog">
+<meta name="twitter:description" content="前情提要 导师让我发一篇期刊，参考论文和代码都有，让我改。时间所剩不多大概两个礼拜。不管怎样，先拆解一下任务。\n改代码 写论文 改代码 主要的修改思路是修改特征提取部分，让模型提取更多的语义信息以期提高模型的整体性能。具体来说是在原特征提取分支的基础上添加两个特征提取分支SAW2和Dinov2。听起来挺简单的，但具体操作还是不容易。先分析原始特征提取分支的输入输出吧。\n"><meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:image" content='http://localhost:1313/blog/posts/my_first_essay/cover.jpeg' />
+    <link rel="shortcut icon" href="/blog/favicon.ico" />
+<link rel="stylesheet" href="/blog/fonts/LXGW/lxgw.css" />
+<style>
+    @font-face {
+        font-family: 'MapleMonoNF';
+        src: url(/blog/fonts/MapleMono-NF-Regular.ttf);
+    }
+
+    :root {
+        --sys-font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Droid Sans', 'Helvetica Neue';
+        --zh-font-family: 'LXGW WenKai', 'PingFang SC', 'Hiragino Sans GB', 'Droid Sans Fallback', 'Microsoft YaHei';
+        --base-font-family: 'LXGW WenKai', 'Lato', var(--sys-font-family), var(--zh-font-family), sans-serif;
+        --code-font-family: MapleMonoNF, 'LXGW WenKai', Menlo, Monaco, Consolas, 'Courier New', var(--zh-font-family),
+            monospace;
+    }
+
+     
+    .highlight {
+        font-size: 0.9em;
+    }
+
+     
+    .caption {
+        color: gray;
+        font-size: 0.8em;
+    }
+
+    .article-content .gallery {
+        margin: 0;
+        width: 100%;
+    }
+
+     
+    .menu-social li {
+        margin-right: 0.4em;
+    }
+
+     
+    .has-image .article-details:not(:has(.article-time)) {
+        background: unset !important;
+        background-color: rgba(0, 0, 0, 0.3) !important;
+    }
+
+     
+    .has-image:has(.article-header) {
+        border: 1px solid gray;
+    }
+
+    .article-subtitle {
+        font-size: 1em;
+        margin-top: 1em;
+    }
+
+     
+    .related-content article .article-title {
+        font-size: 1em;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    .article-page .main-article .article-header .article-details {
+        padding-bottom: 25px;
+    }
+</style>
+<script>
+    class FriendlyLink extends HTMLElement {
+        connectedCallback() {
+            const shadow = this.attachShadow({mode: 'open'});
+
+            const src = this.getAttribute('src') || undefined;
+            const title = this.getAttribute('title') || undefined;
+            const description = this.getAttribute('desc') || undefined;
+
+            shadow.innerHTML = `<style>
+                .friend-link-card {
+                    background-color: var(--card-bg-color);
+                    border-radius: 8px;
+                    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+                    transition:
+                        transform 0.2s ease,
+                        box-shadow 0.2s ease;
+                    overflow: hidden;
+                }
+
+                .friend-link-card:hover {
+                    transform: translateY(-5px);
+                    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+                }
+
+                .friend-link-card a {
+                    text-decoration: none;
+                    color: inherit;
+                    display: block;
+                    padding: 15px;
+                }
+
+                .friend-link-info {
+                    padding: 10px 0;
+                }
+
+                .friend-link-name {
+                    margin: 0;
+                    font-size: 1.2em;
+                    color: var(--card-title-color);
+                }
+
+                .friend-link-description {
+                    margin: 5px 0 0;
+                    font-size: 0.9em;
+                    color: var(--card-text-color);
+                }
+            </style>
+            <div class="friend-link-card">
+                <a href="${src}" target="_blank" rel="noopener noreferrer">
+                    <div class="friend-link-info">
+                    <h3 class="friend-link-name">${title}</h3>
+                    <p class="friend-link-description">${description}</p>
+                    </div>
+                </a>
+            </div>`;
+        }
+    }
+
+    customElements.define('friendly-link', FriendlyLink);
+
+</script>
+
+    </head>
+    <body class="
+    article-page
+    ">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "light");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex on-phone--column extended"><aside class="sidebar left-sidebar sticky ">
+    <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="切换菜单">
+        <span class="hamburger-box">
+            <span class="hamburger-inner"></span>
+        </span>
+    </button>
+
+    <header>
+        
+            
+            <figure class="site-avatar">
+                <a href="/blog/">
+                
+                    
+                    
+                    
+                        
+                        <img src="/blog/images/avatar_hu_966116bbcfed5fa1.jpg" width="300"
+                            height="300" class="site-logo" loading="lazy" alt="Avatar">
+                    
+                
+                </a>
+                
+                    <span class="emoji">🍥</span>
+                
+            </figure>
+            
+        
+        
+        <div class="site-meta">
+            <h1 class="site-name"><a href="/blog">codersgl&#39;s blog</a></h1>
+            <h2 class="site-description">Imagination is the source of all motivation.</h2>
+        </div>
+    </header><ol class="menu-social">
+            
+                <li>
+                    <a 
+                        href='https://github.com/codersgl'
+                        target="_blank"
+                        title="GitHub 主页"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-github" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M9 19c-4.3 1.4 -4.3 -2.5 -6 -3m12 5v-3.5c0 -1 .1 -1.4 -.5 -2c2.8 -.3 5.5 -1.4 5.5 -6a4.6 4.6 0 0 0 -1.3 -3.2a4.2 4.2 0 0 0 -.1 -3.2s-1.1 -.3 -3.5 1.3a12.3 12.3 0 0 0 -6.2 0c-2.4 -1.6 -3.5 -1.3 -3.5 -1.3a4.2 4.2 0 0 0 -.1 3.2a4.6 4.6 0 0 0 -1.3 3.2c0 4.6 2.7 5.7 5.5 6c-.6 .6 -.6 1.2 -.5 2v3.5" />
+</svg>
+
+
+
+                        
+                    </a>
+                </li>
+            
+                <li>
+                    <a 
+                        href='/blog/index.xml'
+                        
+                        title="RSS 订阅"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-rss" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="5" cy="19" r="1" />
+  <path d="M4 4a16 16 0 0 1 16 16" />
+  <path d="M4 11a9 9 0 0 1 9 9" />
+</svg>
+
+
+
+                        
+                    </a>
+                </li>
+            
+        </ol><ol class="menu" id="main-menu">
+        
+        
+        
+        <li >
+            <a href='/blog/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-home" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <polyline points="5 12 3 12 12 3 21 12 19 12" />
+  <path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7" />
+  <path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6" />
+</svg>
+
+
+
+                
+                <span>首页</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/blog/page/archives' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-archive" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <rect x="3" y="4" width="18" height="4" rx="2" />
+  <path d="M5 8v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-10" />
+  <line x1="10" y1="12" x2="14" y2="12" />
+</svg>
+
+
+
+                
+                <span>归档</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/blog/page/links' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-link" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M10 14a3.5 3.5 0 0 0 5 0l4 -4a3.5 3.5 0 0 0 -5 -5l-.5 .5" />
+  <path d="M14 10a3.5 3.5 0 0 0 -5 0l-4 4a3.5 3.5 0 0 0 5 5l.5 -.5" />
+</svg>
+
+
+
+                
+                <span>友链</span>
+            </a>
+        </li>
+        
+        <li class="menu-bottom-section">
+            <ol class="menu">
+
+                
+                    <li id="dark-mode-toggle">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="8" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="16" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <span>暗色模式</span>
+                    </li>
+                
+            </ol>
+        </li>
+    </ol>
+</aside>
+
+    <aside class="sidebar right-sidebar sticky">
+        
+            
+                <form action="/blog/page/search/" class="search-form widget" >
+        <p>
+            <label>搜索</label>
+            <input name="keyword" required autocomplete="off" placeholder="输入关键词..." />
+        
+            <button title="搜索">
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-search" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="10" cy="10" r="7" />
+  <line x1="21" y1="21" x2="15" y2="15" />
+</svg>
+
+
+
+            </button>
+        </p>
+    </form>
+            
+        
+            
+                
+    <section class="widget archives">
+        <div class="widget-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <line x1="5" y1="9" x2="19" y2="9" />
+  <line x1="5" y1="15" x2="19" y2="15" />
+  <line x1="11" y1="4" x2="7" y2="20" />
+  <line x1="17" y1="4" x2="13" y2="20" />
+</svg>
+
+
+
+        </div>
+        <h2 class="widget-title section-title">目录</h2>
+        
+        <div class="widget--toc">
+            <nav id="TableOfContents">
+  <ul>
+    <li><a href="#前情提要">前情提要</a></li>
+    <li><a href="#改代码">改代码</a>
+      <ul>
+        <li><a href="#input">input</a></li>
+        <li><a href="#net-info">Net info</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+        </div>
+    </section>
+
+            
+        
+            
+                <section class="widget tagCloud">
+    <div class="widget-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <line x1="5" y1="9" x2="19" y2="9" />
+  <line x1="5" y1="15" x2="19" y2="15" />
+  <line x1="11" y1="4" x2="7" y2="20" />
+  <line x1="17" y1="4" x2="13" y2="20" />
+</svg>
+
+
+
+    </div>
+    <h2 class="widget-title section-title">分类</h2>
+
+    <div class="tagCloud-tags">
+        
+            <a href="/blog/categories/jotting/" class="font_size_1">
+                Jotting
+            </a>
+        
+            <a href="/blog/categories/tools/" class="font_size_1">
+                Tools
+            </a>
+        
+    </div>
+</section>
+
+            
+        
+            
+                <section class="widget tagCloud">
+    <div class="widget-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-tag" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M11 3L20 12a1.5 1.5 0 0 1 0 2L14 20a1.5 1.5 0 0 1 -2 0L3 11v-4a4 4 0 0 1 4 -4h4" />
+  <circle cx="9" cy="9" r="2" />
+</svg>
+
+
+
+    </div>
+    <h2 class="widget-title section-title">标签云</h2>
+
+    <div class="tagCloud-tags">
+        
+            <a href="/blog/tags/c/c&#43;&#43;/">
+                C/C&#43;&#43;
+            </a>
+        
+            <a href="/blog/tags/neovim/">
+                Neovim
+            </a>
+        
+    </div>
+</section>
+
+            
+        
+    </aside>
+
+
+            <main class="main full-width">
+    <article class="has-image main-article">
+    <header class="article-header">
+        <div class="article-image">
+            <a href="/blog/posts/my_first_essay/">
+                <img src="/blog/posts/my_first_essay/cover.jpeg"
+                        
+                        width="1792" 
+                        height="1024" 
+                        loading="lazy"
+                        alt="Featured image of post My_first_essay" />
+                
+            </a>
+        </div>
+    
+
+    <div class="article-details">
+    
+
+    <div class="article-title-wrapper">
+        <h2 class="article-title">
+            <a href="/blog/posts/my_first_essay/">My_first_essay</a>
+        </h2>
+    
+        
+    </div>
+
+    
+    
+    
+    
+    <footer class="article-time">
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
+  <circle cx="18" cy="18" r="4" />
+  <path d="M15 3v4" />
+  <path d="M7 3v4" />
+  <path d="M3 11h16" />
+  <path d="M18 16.496v1.504l1 1" />
+</svg>
+                <time class="article-time--published" datetime='2026-01-06T18:55:14&#43;08:00'>Jan 06, 2026</time>
+            </div>
+        
+
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+                <time class="article-time--reading">
+                    阅读时长: 8 分钟
+                </time>
+            </div>
+        
+    </footer>
+    
+
+    
+</div>
+
+</header>
+
+    <section class="article-content">
+    
+    
+    <h2 id="前情提要">前情提要
+</h2><p>导师让我发一篇期刊，参考论文和代码都有，让我改。时间所剩不多大概两个礼拜。不管怎样，先拆解一下任务。</p>
+<ul>
+<li><input disabled="" type="checkbox"> 改代码</li>
+<li><input disabled="" type="checkbox"> 写论文</li>
+</ul>
+<h2 id="改代码">改代码
+</h2><p>主要的修改思路是修改特征提取部分，让模型提取更多的语义信息以期提高模型的整体性能。具体来说是在原特征提取分支的基础上添加两个特征提取分支SAW2和Dinov2。听起来挺简单的，但具体操作还是不容易。先分析原始特征提取分支的输入输出吧。</p>
+<h3 id="input">input
+</h3><p>网络的输入可以从数据加载 (loading_data.py, SHHA.py) 和处理流程 (engine.py, collate_fn) 中推断出来。</p>
+<p>简而言之，DSGCNet 网络的输入是一个标准的 4D PyTorch 张量，包含了一批经过预处理和归一化的 RGB 图像。</p>
+<p>具体输入格式</p>
+<ol>
+<li>训练阶段 (Training)
+在训练时，网络接收的输入张量形状通常为：</li>
+</ol>
+<p>$$(B \times 4, 3, 128, 128)$$</p>
+<ul>
+<li>B (Batch Size): 由 train.py 中的 &ndash;batch_size 参数控制（默认 8）。</li>
+<li>4 (Num Patches): 数据加载通过 random_crop 将每张原始图像裁剪为 4 个 patches。collate_fn_crowd_train 会将这 4 个 patch 展平并入 Batch 维度。</li>
+<li>3 (Channels): RGB 通道。</li>
+<li>128×128 (Resolution): 训练时使用固定大小的随机裁剪（在 SHHA.py 中硬编码为 128）。</li>
+</ul>
+<blockquote>
+<p>随机裁剪的目的：从一张大图中随机裁剪 4 个不同的区域，相当于增加了训练数据的多样性。这有助于模型学习局部特征，防止过拟合，并提高模型对不同密度分布区域的鲁棒性。</p>
+</blockquote>
+<p>数据类型: Float32。归一化: 使用 ImageNet 标准均值和方差：
+Mean: [0.485, 0.456, 0.406]
+Std: [0.229, 0.224, 0.225]</p>
+<ol start="2">
+<li>测试/评估阶段 (Evaluation)
+在评估时，通常 batch_size 设为 1（因为图像分辨率不一），输入形状为：</li>
+</ol>
+<p>$$(1, 3, H, W)$$</p>
+<ul>
+<li>H,W: 原始图像的高度和宽度（为了处理不同尺寸，通常使用 Padding 或 Batch Size=1）。</li>
+</ul>
+<blockquote>
+<p>注意: 这里的 H 和 W 会被处理成 128 的倍数（通过 padding），这在 misc.py 的 nested_tensor_from_tensor_list 中处理。</p>
+</blockquote>
+<p>辅助输入 (用于 Loss 计算)
+虽然网络前向传播 (model(samples)) 只接收图像张量，但在训练循环 (engine.py) 中，还需要以下数据来计算损失：</p>
+<ul>
+<li>Ground Truth Density Map (gt_dmap): 形状对应于输入图像，用于监督 Density Approximation 分支。</li>
+<li>Point Annotations (targets): 包含人员坐标点
+(point)，用于监督 Representation Approximation 分支和分类/回归损失。</li>
+</ul>
+<h3 id="net-info">Net info
+</h3><p><img src="/blog/posts/my_first_essay/DSGCNet_architecture.png"
+	width="1119"
+	height="535"
+	
+	loading="lazy"
+	
+		alt="DSGCNet_architecture"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="209"
+		data-flex-basis="501px"
+	
+></p>
+<p>运行下面的脚本，查看输入数据在网络中的流动情况</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">torch</span>
+</span></span><span class="line"><span class="cl"><span class="kn">from</span> <span class="nn">torchinfo</span> <span class="kn">import</span> <span class="n">summary</span>
+</span></span><span class="line"><span class="cl"><span class="kn">from</span> <span class="nn">models.DSGCnet</span> <span class="kn">import</span> <span class="n">DSGCnet</span>
+</span></span><span class="line"><span class="cl"><span class="kn">from</span> <span class="nn">models.backbone</span> <span class="kn">import</span> <span class="n">Backbone_VGG</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&#34;__main__&#34;</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">    <span class="n">device</span> <span class="o">=</span> <span class="s2">&#34;cuda&#34;</span> <span class="k">if</span> <span class="n">torch</span><span class="o">.</span><span class="n">cuda</span><span class="o">.</span><span class="n">is_available</span><span class="p">()</span> <span class="k">else</span> <span class="s2">&#34;cpu&#34;</span>
+</span></span><span class="line"><span class="cl">    <span class="nb">input</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">randn</span><span class="p">((</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">128</span><span class="p">,</span> <span class="mi">128</span><span class="p">))</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="n">backbone</span> <span class="o">=</span> <span class="n">Backbone_VGG</span><span class="p">(</span><span class="s2">&#34;vgg16_bn&#34;</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="n">dsgc_net</span> <span class="o">=</span> <span class="n">DSGCnet</span><span class="p">(</span><span class="n">backbone</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="n">summary</span><span class="p">(</span><span class="n">dsgc_net</span><span class="p">,</span> <span class="n">input_data</span><span class="o">=</span><span class="nb">input</span><span class="p">)</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>输出如下:</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">  1
+</span><span class="lnt">  2
+</span><span class="lnt">  3
+</span><span class="lnt">  4
+</span><span class="lnt">  5
+</span><span class="lnt">  6
+</span><span class="lnt">  7
+</span><span class="lnt">  8
+</span><span class="lnt">  9
+</span><span class="lnt"> 10
+</span><span class="lnt"> 11
+</span><span class="lnt"> 12
+</span><span class="lnt"> 13
+</span><span class="lnt"> 14
+</span><span class="lnt"> 15
+</span><span class="lnt"> 16
+</span><span class="lnt"> 17
+</span><span class="lnt"> 18
+</span><span class="lnt"> 19
+</span><span class="lnt"> 20
+</span><span class="lnt"> 21
+</span><span class="lnt"> 22
+</span><span class="lnt"> 23
+</span><span class="lnt"> 24
+</span><span class="lnt"> 25
+</span><span class="lnt"> 26
+</span><span class="lnt"> 27
+</span><span class="lnt"> 28
+</span><span class="lnt"> 29
+</span><span class="lnt"> 30
+</span><span class="lnt"> 31
+</span><span class="lnt"> 32
+</span><span class="lnt"> 33
+</span><span class="lnt"> 34
+</span><span class="lnt"> 35
+</span><span class="lnt"> 36
+</span><span class="lnt"> 37
+</span><span class="lnt"> 38
+</span><span class="lnt"> 39
+</span><span class="lnt"> 40
+</span><span class="lnt"> 41
+</span><span class="lnt"> 42
+</span><span class="lnt"> 43
+</span><span class="lnt"> 44
+</span><span class="lnt"> 45
+</span><span class="lnt"> 46
+</span><span class="lnt"> 47
+</span><span class="lnt"> 48
+</span><span class="lnt"> 49
+</span><span class="lnt"> 50
+</span><span class="lnt"> 51
+</span><span class="lnt"> 52
+</span><span class="lnt"> 53
+</span><span class="lnt"> 54
+</span><span class="lnt"> 55
+</span><span class="lnt"> 56
+</span><span class="lnt"> 57
+</span><span class="lnt"> 58
+</span><span class="lnt"> 59
+</span><span class="lnt"> 60
+</span><span class="lnt"> 61
+</span><span class="lnt"> 62
+</span><span class="lnt"> 63
+</span><span class="lnt"> 64
+</span><span class="lnt"> 65
+</span><span class="lnt"> 66
+</span><span class="lnt"> 67
+</span><span class="lnt"> 68
+</span><span class="lnt"> 69
+</span><span class="lnt"> 70
+</span><span class="lnt"> 71
+</span><span class="lnt"> 72
+</span><span class="lnt"> 73
+</span><span class="lnt"> 74
+</span><span class="lnt"> 75
+</span><span class="lnt"> 76
+</span><span class="lnt"> 77
+</span><span class="lnt"> 78
+</span><span class="lnt"> 79
+</span><span class="lnt"> 80
+</span><span class="lnt"> 81
+</span><span class="lnt"> 82
+</span><span class="lnt"> 83
+</span><span class="lnt"> 84
+</span><span class="lnt"> 85
+</span><span class="lnt"> 86
+</span><span class="lnt"> 87
+</span><span class="lnt"> 88
+</span><span class="lnt"> 89
+</span><span class="lnt"> 90
+</span><span class="lnt"> 91
+</span><span class="lnt"> 92
+</span><span class="lnt"> 93
+</span><span class="lnt"> 94
+</span><span class="lnt"> 95
+</span><span class="lnt"> 96
+</span><span class="lnt"> 97
+</span><span class="lnt"> 98
+</span><span class="lnt"> 99
+</span><span class="lnt">100
+</span><span class="lnt">101
+</span><span class="lnt">102
+</span><span class="lnt">103
+</span><span class="lnt">104
+</span><span class="lnt">105
+</span><span class="lnt">106
+</span><span class="lnt">107
+</span><span class="lnt">108
+</span><span class="lnt">109
+</span><span class="lnt">110
+</span><span class="lnt">111
+</span><span class="lnt">112
+</span><span class="lnt">113
+</span><span class="lnt">114
+</span><span class="lnt">115
+</span><span class="lnt">116
+</span><span class="lnt">117
+</span><span class="lnt">118
+</span><span class="lnt">119
+</span><span class="lnt">120
+</span><span class="lnt">121
+</span><span class="lnt">122
+</span><span class="lnt">123
+</span><span class="lnt">124
+</span><span class="lnt">125
+</span><span class="lnt">126
+</span><span class="lnt">127
+</span><span class="lnt">128
+</span><span class="lnt">129
+</span><span class="lnt">130
+</span><span class="lnt">131
+</span><span class="lnt">132
+</span><span class="lnt">133
+</span><span class="lnt">134
+</span><span class="lnt">135
+</span><span class="lnt">136
+</span><span class="lnt">137
+</span><span class="lnt">138
+</span><span class="lnt">139
+</span><span class="lnt">140
+</span><span class="lnt">141
+</span><span class="lnt">142
+</span><span class="lnt">143
+</span><span class="lnt">144
+</span><span class="lnt">145
+</span><span class="lnt">146
+</span><span class="lnt">147
+</span><span class="lnt">148
+</span><span class="lnt">149
+</span><span class="lnt">150
+</span><span class="lnt">151
+</span><span class="lnt">152
+</span><span class="lnt">153
+</span><span class="lnt">154
+</span><span class="lnt">155
+</span><span class="lnt">156
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-text" data-lang="text"><span class="line"><span class="cl">==========================================================================================
+</span></span><span class="line"><span class="cl">Layer (type:depth-idx)                   Output Shape              Param #
+</span></span><span class="line"><span class="cl">==========================================================================================
+</span></span><span class="line"><span class="cl">DSGCnet                                  [1, 1, 16, 16]            197,378
+</span></span><span class="line"><span class="cl">├─Backbone_VGG: 1-1                      [1, 128, 64, 64]          --
+</span></span><span class="line"><span class="cl">│    └─Sequential: 2-1                   [1, 128, 64, 64]          --
+</span></span><span class="line"><span class="cl">│    │    └─Conv2d: 3-1                  [1, 64, 128, 128]         1,792
+</span></span><span class="line"><span class="cl">│    │    └─BatchNorm2d: 3-2             [1, 64, 128, 128]         128
+</span></span><span class="line"><span class="cl">│    │    └─ReLU: 3-3                    [1, 64, 128, 128]         --
+</span></span><span class="line"><span class="cl">│    │    └─Conv2d: 3-4                  [1, 64, 128, 128]         36,928
+</span></span><span class="line"><span class="cl">│    │    └─BatchNorm2d: 3-5             [1, 64, 128, 128]         128
+</span></span><span class="line"><span class="cl">│    │    └─ReLU: 3-6                    [1, 64, 128, 128]         --
+</span></span><span class="line"><span class="cl">│    │    └─MaxPool2d: 3-7               [1, 64, 64, 64]           --
+</span></span><span class="line"><span class="cl">│    │    └─Conv2d: 3-8                  [1, 128, 64, 64]          73,856
+</span></span><span class="line"><span class="cl">│    │    └─BatchNorm2d: 3-9             [1, 128, 64, 64]          256
+</span></span><span class="line"><span class="cl">│    │    └─ReLU: 3-10                   [1, 128, 64, 64]          --
+</span></span><span class="line"><span class="cl">│    │    └─Conv2d: 3-11                 [1, 128, 64, 64]          147,584
+</span></span><span class="line"><span class="cl">│    │    └─BatchNorm2d: 3-12            [1, 128, 64, 64]          256
+</span></span><span class="line"><span class="cl">│    │    └─ReLU: 3-13                   [1, 128, 64, 64]          --
+</span></span><span class="line"><span class="cl">│    └─Sequential: 2-2                   [1, 256, 32, 32]          --
+</span></span><span class="line"><span class="cl">│    │    └─MaxPool2d: 3-14              [1, 128, 32, 32]          --
+</span></span><span class="line"><span class="cl">│    │    └─Conv2d: 3-15                 [1, 256, 32, 32]          295,168
+</span></span><span class="line"><span class="cl">│    │    └─BatchNorm2d: 3-16            [1, 256, 32, 32]          512
+</span></span><span class="line"><span class="cl">│    │    └─ReLU: 3-17                   [1, 256, 32, 32]          --
+</span></span><span class="line"><span class="cl">│    │    └─Conv2d: 3-18                 [1, 256, 32, 32]          590,080
+</span></span><span class="line"><span class="cl">│    │    └─BatchNorm2d: 3-19            [1, 256, 32, 32]          512
+</span></span><span class="line"><span class="cl">│    │    └─ReLU: 3-20                   [1, 256, 32, 32]          --
+</span></span><span class="line"><span class="cl">│    │    └─Conv2d: 3-21                 [1, 256, 32, 32]          590,080
+</span></span><span class="line"><span class="cl">│    │    └─BatchNorm2d: 3-22            [1, 256, 32, 32]          512
+</span></span><span class="line"><span class="cl">│    │    └─ReLU: 3-23                   [1, 256, 32, 32]          --
+</span></span><span class="line"><span class="cl">│    └─Sequential: 2-3                   [1, 512, 16, 16]          --
+</span></span><span class="line"><span class="cl">│    │    └─MaxPool2d: 3-24              [1, 256, 16, 16]          --
+</span></span><span class="line"><span class="cl">│    │    └─Conv2d: 3-25                 [1, 512, 16, 16]          1,180,160
+</span></span><span class="line"><span class="cl">│    │    └─BatchNorm2d: 3-26            [1, 512, 16, 16]          1,024
+</span></span><span class="line"><span class="cl">│    │    └─ReLU: 3-27                   [1, 512, 16, 16]          --
+</span></span><span class="line"><span class="cl">│    │    └─Conv2d: 3-28                 [1, 512, 16, 16]          2,359,808
+</span></span><span class="line"><span class="cl">│    │    └─BatchNorm2d: 3-29            [1, 512, 16, 16]          1,024
+</span></span><span class="line"><span class="cl">│    │    └─ReLU: 3-30                   [1, 512, 16, 16]          --
+</span></span><span class="line"><span class="cl">│    │    └─Conv2d: 3-31                 [1, 512, 16, 16]          2,359,808
+</span></span><span class="line"><span class="cl">│    │    └─BatchNorm2d: 3-32            [1, 512, 16, 16]          1,024
+</span></span><span class="line"><span class="cl">│    │    └─ReLU: 3-33                   [1, 512, 16, 16]          --
+</span></span><span class="line"><span class="cl">│    └─Sequential: 2-4                   [1, 512, 8, 8]            --
+</span></span><span class="line"><span class="cl">│    │    └─MaxPool2d: 3-34              [1, 512, 8, 8]            --
+</span></span><span class="line"><span class="cl">│    │    └─Conv2d: 3-35                 [1, 512, 8, 8]            2,359,808
+</span></span><span class="line"><span class="cl">│    │    └─BatchNorm2d: 3-36            [1, 512, 8, 8]            1,024
+</span></span><span class="line"><span class="cl">│    │    └─ReLU: 3-37                   [1, 512, 8, 8]            --
+</span></span><span class="line"><span class="cl">│    │    └─Conv2d: 3-38                 [1, 512, 8, 8]            2,359,808
+</span></span><span class="line"><span class="cl">│    │    └─BatchNorm2d: 3-39            [1, 512, 8, 8]            1,024
+</span></span><span class="line"><span class="cl">│    │    └─ReLU: 3-40                   [1, 512, 8, 8]            --
+</span></span><span class="line"><span class="cl">│    │    └─Conv2d: 3-41                 [1, 512, 8, 8]            2,359,808
+</span></span><span class="line"><span class="cl">│    │    └─BatchNorm2d: 3-42            [1, 512, 8, 8]            1,024
+</span></span><span class="line"><span class="cl">│    │    └─ReLU: 3-43                   [1, 512, 8, 8]            --
+</span></span><span class="line"><span class="cl">├─Decoder_SPD_PAFPN: 1-2                 [1, 256, 16, 16]          --
+</span></span><span class="line"><span class="cl">│    └─Sequential: 2-5                   [1, 256, 8, 8]            --
+</span></span><span class="line"><span class="cl">│    │    └─Conv2d: 3-44                 [1, 256, 8, 8]            131,328
+</span></span><span class="line"><span class="cl">│    │    └─BatchNorm2d: 3-45            [1, 256, 8, 8]            512
+</span></span><span class="line"><span class="cl">│    │    └─ReLU: 3-46                   [1, 256, 8, 8]            --
+</span></span><span class="line"><span class="cl">│    └─Upsample: 2-6                     [1, 256, 16, 16]          --
+</span></span><span class="line"><span class="cl">│    └─Sequential: 2-7                   [1, 256, 8, 8]            --
+</span></span><span class="line"><span class="cl">│    │    └─Conv2d: 3-47                 [1, 256, 8, 8]            590,080
+</span></span><span class="line"><span class="cl">│    │    └─BatchNorm2d: 3-48            [1, 256, 8, 8]            512
+</span></span><span class="line"><span class="cl">│    │    └─ReLU: 3-49                   [1, 256, 8, 8]            --
+</span></span><span class="line"><span class="cl">│    └─Sequential: 2-8                   [1, 256, 16, 16]          --
+</span></span><span class="line"><span class="cl">│    │    └─Conv2d: 3-50                 [1, 256, 16, 16]          131,328
+</span></span><span class="line"><span class="cl">│    │    └─BatchNorm2d: 3-51            [1, 256, 16, 16]          512
+</span></span><span class="line"><span class="cl">│    │    └─ReLU: 3-52                   [1, 256, 16, 16]          --
+</span></span><span class="line"><span class="cl">│    └─Upsample: 2-9                     [1, 256, 32, 32]          --
+</span></span><span class="line"><span class="cl">│    └─Sequential: 2-10                  [1, 256, 16, 16]          --
+</span></span><span class="line"><span class="cl">│    │    └─Conv2d: 3-53                 [1, 256, 16, 16]          590,080
+</span></span><span class="line"><span class="cl">│    │    └─BatchNorm2d: 3-54            [1, 256, 16, 16]          512
+</span></span><span class="line"><span class="cl">│    │    └─ReLU: 3-55                   [1, 256, 16, 16]          --
+</span></span><span class="line"><span class="cl">│    └─Sequential: 2-11                  [1, 256, 32, 32]          --
+</span></span><span class="line"><span class="cl">│    │    └─Conv2d: 3-56                 [1, 256, 32, 32]          65,792
+</span></span><span class="line"><span class="cl">│    │    └─BatchNorm2d: 3-57            [1, 256, 32, 32]          512
+</span></span><span class="line"><span class="cl">│    │    └─ReLU: 3-58                   [1, 256, 32, 32]          --
+</span></span><span class="line"><span class="cl">│    └─Sequential: 2-12                  [1, 256, 32, 32]          --
+</span></span><span class="line"><span class="cl">│    │    └─Conv2d: 3-59                 [1, 256, 32, 32]          590,080
+</span></span><span class="line"><span class="cl">│    │    └─BatchNorm2d: 3-60            [1, 256, 32, 32]          512
+</span></span><span class="line"><span class="cl">│    │    └─ReLU: 3-61                   [1, 256, 32, 32]          --
+</span></span><span class="line"><span class="cl">│    └─Sequential: 2-13                  [1, 256, 16, 16]          --
+</span></span><span class="line"><span class="cl">│    │    └─SPD: 3-62                    [1, 1024, 16, 16]         --
+</span></span><span class="line"><span class="cl">│    │    └─Conv2d: 3-63                 [1, 256, 16, 16]          262,400
+</span></span><span class="line"><span class="cl">│    │    └─BatchNorm2d: 3-64            [1, 256, 16, 16]          512
+</span></span><span class="line"><span class="cl">│    │    └─ReLU: 3-65                   [1, 256, 16, 16]          --
+</span></span><span class="line"><span class="cl">│    └─Sequential: 2-14                  [1, 256, 16, 16]          (recursive)
+</span></span><span class="line"><span class="cl">│    │    └─Conv2d: 3-66                 [1, 256, 16, 16]          (recursive)
+</span></span><span class="line"><span class="cl">│    │    └─BatchNorm2d: 3-67            [1, 256, 16, 16]          (recursive)
+</span></span><span class="line"><span class="cl">│    │    └─ReLU: 3-68                   [1, 256, 16, 16]          --
+</span></span><span class="line"><span class="cl">│    └─Sequential: 2-15                  [1, 256, 8, 8]            --
+</span></span><span class="line"><span class="cl">│    │    └─SPD: 3-69                    [1, 1024, 8, 8]           --
+</span></span><span class="line"><span class="cl">│    │    └─Conv2d: 3-70                 [1, 256, 8, 8]            262,400
+</span></span><span class="line"><span class="cl">│    │    └─BatchNorm2d: 3-71            [1, 256, 8, 8]            512
+</span></span><span class="line"><span class="cl">│    │    └─ReLU: 3-72                   [1, 256, 8, 8]            --
+</span></span><span class="line"><span class="cl">│    └─Sequential: 2-16                  [1, 256, 8, 8]            (recursive)
+</span></span><span class="line"><span class="cl">│    │    └─Conv2d: 3-73                 [1, 256, 8, 8]            (recursive)
+</span></span><span class="line"><span class="cl">│    │    └─BatchNorm2d: 3-74            [1, 256, 8, 8]            (recursive)
+</span></span><span class="line"><span class="cl">│    │    └─ReLU: 3-75                   [1, 256, 8, 8]            --
+</span></span><span class="line"><span class="cl">│    └─Upsample: 2-17                    [1, 256, 16, 16]          --
+</span></span><span class="line"><span class="cl">│    └─Sequential: 2-18                  [1, 256, 16, 16]          --
+</span></span><span class="line"><span class="cl">│    │    └─Conv2d: 3-76                 [1, 256, 16, 16]          196,864
+</span></span><span class="line"><span class="cl">│    │    └─BatchNorm2d: 3-77            [1, 256, 16, 16]          512
+</span></span><span class="line"><span class="cl">│    │    └─ReLU: 3-78                   [1, 256, 16, 16]          --
+</span></span><span class="line"><span class="cl">├─Density_pred: 1-3                      [1, 1, 16, 16]            --
+</span></span><span class="line"><span class="cl">│    └─Sequential: 2-19                  [1, 256, 16, 16]          --
+</span></span><span class="line"><span class="cl">│    │    └─Conv2d: 3-79                 [1, 256, 16, 16]          590,080
+</span></span><span class="line"><span class="cl">│    │    └─BatchNorm2d: 3-80            [1, 256, 16, 16]          512
+</span></span><span class="line"><span class="cl">│    │    └─ReLU: 3-81                   [1, 256, 16, 16]          --
+</span></span><span class="line"><span class="cl">│    └─Sequential: 2-20                  [1, 256, 16, 16]          --
+</span></span><span class="line"><span class="cl">│    │    └─Conv2d: 3-82                 [1, 256, 16, 16]          590,080
+</span></span><span class="line"><span class="cl">│    │    └─BatchNorm2d: 3-83            [1, 256, 16, 16]          512
+</span></span><span class="line"><span class="cl">│    │    └─ReLU: 3-84                   [1, 256, 16, 16]          --
+</span></span><span class="line"><span class="cl">│    └─Sequential: 2-21                  [1, 256, 16, 16]          --
+</span></span><span class="line"><span class="cl">│    │    └─Conv2d: 3-85                 [1, 256, 16, 16]          590,080
+</span></span><span class="line"><span class="cl">│    │    └─BatchNorm2d: 3-86            [1, 256, 16, 16]          512
+</span></span><span class="line"><span class="cl">│    │    └─ReLU: 3-87                   [1, 256, 16, 16]          --
+</span></span><span class="line"><span class="cl">│    └─Sequential: 2-22                  [1, 1, 16, 16]            --
+</span></span><span class="line"><span class="cl">│    │    └─Conv2d: 3-88                 [1, 128, 16, 16]          295,040
+</span></span><span class="line"><span class="cl">│    │    └─BatchNorm2d: 3-89            [1, 128, 16, 16]          256
+</span></span><span class="line"><span class="cl">│    │    └─ReLU: 3-90                   [1, 128, 16, 16]          --
+</span></span><span class="line"><span class="cl">│    │    └─Conv2d: 3-91                 [1, 64, 16, 16]           73,792
+</span></span><span class="line"><span class="cl">│    │    └─BatchNorm2d: 3-92            [1, 64, 16, 16]           128
+</span></span><span class="line"><span class="cl">│    │    └─ReLU: 3-93                   [1, 64, 16, 16]           --
+</span></span><span class="line"><span class="cl">│    │    └─Conv2d: 3-94                 [1, 1, 16, 16]            65
+</span></span><span class="line"><span class="cl">│    │    └─ReLU: 3-95                   [1, 1, 16, 16]            --
+</span></span><span class="line"><span class="cl">├─DensityGCNProcessor: 1-4               [1, 256, 16, 16]          --
+</span></span><span class="line"><span class="cl">│    └─GCNModel: 2-23                    [256, 256]                --
+</span></span><span class="line"><span class="cl">│    │    └─GCNConv: 3-96                [256, 512]                131,584
+</span></span><span class="line"><span class="cl">│    │    └─GCNConv: 3-97                [256, 256]                131,328
+</span></span><span class="line"><span class="cl">├─FeatureGCNProcessor: 1-5               [1, 256, 16, 16]          --
+</span></span><span class="line"><span class="cl">│    └─GCNModel: 2-24                    [256, 256]                --
+</span></span><span class="line"><span class="cl">│    │    └─GCNConv: 3-98                [256, 512]                131,584
+</span></span><span class="line"><span class="cl">│    │    └─GCNConv: 3-99                [256, 256]                131,328
+</span></span><span class="line"><span class="cl">├─RegressionModel: 1-6                   [1, 1024, 2]              1,180,160
+</span></span><span class="line"><span class="cl">│    └─Conv2d: 2-25                      [1, 256, 16, 16]          590,080
+</span></span><span class="line"><span class="cl">│    └─ReLU: 2-26                        [1, 256, 16, 16]          --
+</span></span><span class="line"><span class="cl">│    └─Conv2d: 2-27                      [1, 256, 16, 16]          590,080
+</span></span><span class="line"><span class="cl">│    └─ReLU: 2-28                        [1, 256, 16, 16]          --
+</span></span><span class="line"><span class="cl">│    └─Conv2d: 2-29                      [1, 8, 16, 16]            18,440
+</span></span><span class="line"><span class="cl">├─ClassificationModel: 1-7               [1, 1024, 2]              1,180,160
+</span></span><span class="line"><span class="cl">│    └─Conv2d: 2-30                      [1, 256, 16, 16]          590,080
+</span></span><span class="line"><span class="cl">│    └─ReLU: 2-31                        [1, 256, 16, 16]          --
+</span></span><span class="line"><span class="cl">│    └─Conv2d: 2-32                      [1, 256, 16, 16]          590,080
+</span></span><span class="line"><span class="cl">│    └─ReLU: 2-33                        [1, 256, 16, 16]          --
+</span></span><span class="line"><span class="cl">│    └─Conv2d: 2-34                      [1, 8, 16, 16]            18,440
+</span></span><span class="line"><span class="cl">├─AnchorPoints: 1-8                      [1, 1024, 2]              --
+</span></span><span class="line"><span class="cl">==========================================================================================
+</span></span><span class="line"><span class="cl">Total params: 25,169,875
+</span></span><span class="line"><span class="cl">Trainable params: 25,169,875
+</span></span><span class="line"><span class="cl">Non-trainable params: 0
+</span></span><span class="line"><span class="cl">Total mult-adds (G): 7.54
+</span></span><span class="line"><span class="cl">==========================================================================================
+</span></span><span class="line"><span class="cl">Input size (MB): 0.20
+</span></span><span class="line"><span class="cl">Forward/backward pass size (MB): 94.67
+</span></span><span class="line"><span class="cl">Params size (MB): 90.44
+</span></span><span class="line"><span class="cl">Estimated Total Size (MB): 185.31
+</span></span><span class="line"><span class="cl">==========================================================================================
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>我们重点关注特征提取部分，可以看到网络在经过特征提取和融合后的输出形状为<code>[1, 256, 16, 16]</code>，这是我们修改代码的关键，另外两条新增分支的最终形状也要如此。</p>
+
+</section>
+
+
+    <footer class="article-footer">
+    
+
+    
+    <section class="article-copyright">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copyright" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <path d="M14.5 9a3.5 4 0 1 0 0 6" />
+</svg>
+
+
+
+        <span>Licensed under CC BY-NC-SA 4.0</span>
+    </section>
+    </footer>
+
+
+    
+        <link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css"integrity="sha384-n8MVd4RsNIU0tAv4ct0nTaAbDJwPJzDEaqSD1odI&#43;WdtXRGWt2kTvGFasHpSy3SV"crossorigin="anonymous"
+            ><script 
+                src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"integrity="sha384-XjKyOOlGwcjNTAIQHIpgOno0Hl1YQqzUOEleOLALmuqehneUG&#43;vnGctmUb0ZY0l8"crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"integrity="sha384-&#43;VBxd3r6XgURycqtZ117nYw44OOcIax56Z4dCRWbxyPt0Koah1uHoK0o4&#43;/RRE05"crossorigin="anonymous"
+                defer
+                >
+            </script><script>
+    window.addEventListener("DOMContentLoaded", () => {
+        const elementsToRender = [".main-article", ".widget--toc"];
+
+        elementsToRender.forEach(selector => {
+            const element = document.querySelector(selector);
+            if (element) {
+                renderMathInElement(element, {
+                    delimiters: [
+                        { left: "$$", right: "$$", display: true },
+                        { left: "$", right: "$", display: false },
+                        { left: "\\(", right: "\\)", display: false },
+                        { left: "\\[", right: "\\]", display: true }
+                    ],
+                    ignoredClasses: ["gist"]
+                });
+            }
+        });
+    });
+</script>
+    
+</article>
+
+    
+
+    
+
+     
+    
+        
+    <script src='https://unpkg.com/@waline/client@v2/dist/waline.js'></script>
+<link href='https://unpkg.com/@waline/client@v2/dist/waline.css' rel='stylesheet'/>
+
+<div id="waline-template"></div>
+<style>
+    .waline-container {
+        background-color: var(--card-background);
+        border-radius: var(--card-border-radius);
+        box-shadow: var(--shadow-l1);
+        padding: var(--card-padding);
+        --waline-font-size: var(--article-font-size);
+    }
+    .waline-container .wl-count {
+        color: var(--card-text-color-main);
+    }
+</style><script>
+    let classifier = window.location.pathname.replace(/\/$/, '');
+    if (classifier.indexOf('/blog/posts') == 0) {
+        let _waline_container = document.querySelector('#waline-template');
+        _waline_container.id = 'waline';
+        _waline_container.className = 'waline-container';
+
+        
+        let _waline_config = {"dark":"html[data-scheme=\"dark\"]","el":"#waline","emoji":["https://cdn.jsdelivr.net/gh/walinejs/emojis/bmoji","https://cdn.jsdelivr.net/gh/walinejs/emojis/bilibili","https://cdn.jsdelivr.net/gh/walinejs/emojis/tieba"],"imageUploader":false,"lang":"zh-CN","locale":{"admin":"Admin","placeholder":null},"requiredMeta":["nick","mail"],"serverURL":"https://comment.shaobin-jiang.com"};
+        _waline_config.path = classifier;
+        Waline.init(_waline_config);
+    }
+</script>
+
+    
+
+    
+<footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+        2026 codersgl&#39;s blog
+    </section>
+    
+    <section class="powerby">
+        
+    </section>
+</footer>
+
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css"crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css"crossorigin="anonymous"
+            >
+    
+
+            </main>
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.6/dist/vibrant.min.js"integrity="sha256-awcR2jno4kI5X0zL8ex0vi2z&#43;KMkF24hUW8WePSA9HM="crossorigin="anonymous"
+                
+                >
+            </script><script type="text/javascript" src="/blog/ts/main.0db9d3bb15612717eccfcda01bdb204577ec88d4b25414e101d6a0c6df939201.js" defer></script>
+
+
+    </body>
+</html>

@@ -6,13 +6,13 @@
         <description>Recent content on codersgl&#39;s blog</description>
         <generator>Hugo -- gohugo.io</generator>
         <language>zh-Hans</language>
-        <lastBuildDate>Tue, 06 Jan 2026 17:52:23 +0800</lastBuildDate><atom:link href="https://codersgl.github.io/blog/index.xml" rel="self" type="application/rss+xml" /><item>
+        <lastBuildDate>Tue, 06 Jan 2026 18:55:14 +0800</lastBuildDate><atom:link href="https://codersgl.github.io/blog/index.xml" rel="self" type="application/rss+xml" /><item>
         <title>VSCode中配置C/C&#43;&#43;运行和调试环境</title>
         <link>https://codersgl.github.io/blog/posts/config_c_language_in_vscode/</link>
         <pubDate>Tue, 06 Jan 2026 17:52:23 +0800</pubDate>
         
         <guid>https://codersgl.github.io/blog/posts/config_c_language_in_vscode/</guid>
-        <description>&lt;p&gt;首先配置C/C++的插件，然后执行&lt;code&gt;Ctrl+Shift+B&lt;/code&gt;执行生成任务，注意此时焦点一定要将待执行的文件上，否则会报错。&lt;/p&gt;
+        <description>&lt;img src="https://codersgl.github.io/blog/posts/config_c_language_in_vscode/cover.jpeg" alt="《VSCode中配置C/C&#43;&#43;运行和调试环境》封面图" /&gt;&lt;p&gt;首先配置C/C++的插件，然后执行&lt;code&gt;Ctrl+Shift+B&lt;/code&gt;执行生成任务，注意此时焦点一定要将待执行的文件上，否则会报错。&lt;/p&gt;
 &lt;p&gt;然后，生成&lt;code&gt;lunch.json&lt;/code&gt;文件，下面是我的配置模板，该模板可复用，但我现在使用的是WSL环境，不用的操作系统细节可能有些不同。主要的修改点在&lt;code&gt;&amp;quot;program&amp;quot;: &amp;quot;${workspaceRoot}/${fileBasenameNoExtension}&amp;quot;&lt;/code&gt;和&lt;code&gt;&amp;quot;miDebuggerPath&amp;quot;: &amp;quot;/usr/bin/gdb&amp;quot;&lt;/code&gt;，前者的意思是调试工作目录下的当前可执行文件，后者是你的GDB路径，在Linux下执行&lt;code&gt;which gdb&lt;/code&gt;即可得到，如果没有出现路径，安装GDB即可。&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
 &lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
