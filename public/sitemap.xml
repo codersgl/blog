@@ -3,21 +3,30 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
     <loc>https://codersgl.github.io/blog/</loc>
-    <lastmod>2026-01-06T00:07:21+08:00</lastmod>
+    <lastmod>2026-01-06T17:52:23+08:00</lastmod>
+  </url><url>
+    <loc>https://codersgl.github.io/blog/tags/c/c&#43;&#43;/</loc>
+    <lastmod>2026-01-06T17:52:23+08:00</lastmod>
   </url><url>
     <loc>https://codersgl.github.io/blog/categories/</loc>
-    <lastmod>2026-01-06T00:07:21+08:00</lastmod>
+    <lastmod>2026-01-06T17:52:23+08:00</lastmod>
+  </url><url>
+    <loc>https://codersgl.github.io/blog/posts/</loc>
+    <lastmod>2026-01-06T17:52:23+08:00</lastmod>
+  </url><url>
+    <loc>https://codersgl.github.io/blog/tags/</loc>
+    <lastmod>2026-01-06T17:52:23+08:00</lastmod>
+  </url><url>
+    <loc>https://codersgl.github.io/blog/categories/tools/</loc>
+    <lastmod>2026-01-06T17:52:23+08:00</lastmod>
+  </url><url>
+    <loc>https://codersgl.github.io/blog/posts/config_c_language_in_vscode/</loc>
+    <lastmod>2026-01-06T17:52:23+08:00</lastmod>
   </url><url>
     <loc>https://codersgl.github.io/blog/categories/jotting/</loc>
     <lastmod>2026-01-06T00:07:21+08:00</lastmod>
   </url><url>
     <loc>https://codersgl.github.io/blog/tags/neovim/</loc>
-    <lastmod>2026-01-06T00:07:21+08:00</lastmod>
-  </url><url>
-    <loc>https://codersgl.github.io/blog/posts/</loc>
-    <lastmod>2026-01-06T00:07:21+08:00</lastmod>
-  </url><url>
-    <loc>https://codersgl.github.io/blog/tags/</loc>
     <lastmod>2026-01-06T00:07:21+08:00</lastmod>
   </url><url>
     <loc>https://codersgl.github.io/blog/posts/a_hard_decision/</loc>
@@ -36,8 +45,6 @@
     <loc>https://codersgl.github.io/blog/page/</loc>
   </url><url>
     <loc>https://codersgl.github.io/blog/page/search/</loc>
-  </url><url>
-    <loc>https://codersgl.github.io/blog/categories/tools/</loc>
   </url><url>
     <loc>https://codersgl.github.io/blog/categories/tutorials/</loc>
   </url>

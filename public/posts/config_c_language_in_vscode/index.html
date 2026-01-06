@@ -1,19 +1,18 @@
 <!DOCTYPE html>
 <html lang="zh-Hans" dir="ltr">
     <head><meta charset='utf-8'>
-<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content="从今天起，我打算放弃折腾neovim了。当然并不是说neovim不好，相反它很好，无需鼠标，仅用键盘作为输入的唯一操作方式，这是非一般的体验。我也一直希望能把它作为我的主力编辑器使用，唯一的缺点是配置太繁琐了，不管是LSP，还是Lazygit都折腾的我头大。除此之外，浩如烟海的快捷键实在是太难记了，每种插件都有一堆快捷键，每个插件都有自定义的配置，感觉以我现在的水平还不足以驾驭它，因此先将其搁置一边，专心敲代码趴。但Vim模式还是很香的，我现在用Vscode作为主力编辑器，同时搭配Vim插件，说实话体验还不赖，就是不能像neovim一样用键盘掌控一切，其实理论上可行，但还需要学习一些Vscode的快捷键，有点烦，有点乱。\n">
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content="首先配置C/C++的插件，然后执行Ctrl+Shift+B执行生成任务，注意此时焦点一定要将待执行的文件上，否则会报错。\n然后，生成lunch.json文件，下面是我的配置模板，该模板可复用，但我现在使用的是WSL环境，不用的操作系统细节可能有些不同。主要的修改点在&quot;program&quot;: &quot;${workspaceRoot}/${fileBasenameNoExtension}&quot;和&quot;miDebuggerPath&quot;: &quot;/usr/bin/gdb&quot;，前者的意思是调试工作目录下的当前可执行文件，后者是你的GDB路径，在Linux下执行which gdb即可得到，如果没有出现路径，安装GDB即可。\n">
 <title>codersgl&#39;s blog</title>
 
-<link rel='canonical' href='https://codersgl.github.io/blog/posts/a_hard_decision/'>
+<link rel='canonical' href='https://codersgl.github.io/blog/posts/config_c_language_in_vscode/'>
 
 <link rel="stylesheet" href="/blog/scss/style.min.833d6eed45de56f48306bf57268d5b8cdfc8a60e8e7bdc99810464fcd033f7c6.css"><meta property='og:title' content="codersgl's blog">
-<meta property='og:description' content="从今天起，我打算放弃折腾neovim了。当然并不是说neovim不好，相反它很好，无需鼠标，仅用键盘作为输入的唯一操作方式，这是非一般的体验。我也一直希望能把它作为我的主力编辑器使用，唯一的缺点是配置太繁琐了，不管是LSP，还是Lazygit都折腾的我头大。除此之外，浩如烟海的快捷键实在是太难记了，每种插件都有一堆快捷键，每个插件都有自定义的配置，感觉以我现在的水平还不足以驾驭它，因此先将其搁置一边，专心敲代码趴。但Vim模式还是很香的，我现在用Vscode作为主力编辑器，同时搭配Vim插件，说实话体验还不赖，就是不能像neovim一样用键盘掌控一切，其实理论上可行，但还需要学习一些Vscode的快捷键，有点烦，有点乱。\n">
-<meta property='og:url' content='https://codersgl.github.io/blog/posts/a_hard_decision/'>
+<meta property='og:description' content="首先配置C/C++的插件，然后执行Ctrl+Shift+B执行生成任务，注意此时焦点一定要将待执行的文件上，否则会报错。\n然后，生成lunch.json文件，下面是我的配置模板，该模板可复用，但我现在使用的是WSL环境，不用的操作系统细节可能有些不同。主要的修改点在&quot;program&quot;: &quot;${workspaceRoot}/${fileBasenameNoExtension}&quot;和&quot;miDebuggerPath&quot;: &quot;/usr/bin/gdb&quot;，前者的意思是调试工作目录下的当前可执行文件，后者是你的GDB路径，在Linux下执行which gdb即可得到，如果没有出现路径，安装GDB即可。\n">
+<meta property='og:url' content='https://codersgl.github.io/blog/posts/config_c_language_in_vscode/'>
 <meta property='og:site_name' content='codersgl&#39;s blog'>
-<meta property='og:type' content='article'><meta property='article:section' content='Posts' /><meta property='article:tag' content='neovim' /><meta property='article:published_time' content='2026-01-06T00:07:21&#43;08:00'/><meta property='article:modified_time' content='2026-01-06T00:07:21&#43;08:00'/><meta property='og:image' content='https://codersgl.github.io/blog/posts/a_hard_decision/cover.jpg' />
+<meta property='og:type' content='article'><meta property='article:section' content='Posts' /><meta property='article:tag' content='C/C&#43;&#43;' /><meta property='article:published_time' content='2026-01-06T17:52:23&#43;08:00'/><meta property='article:modified_time' content='2026-01-06T17:52:23&#43;08:00'/>
 <meta name="twitter:title" content="codersgl's blog">
-<meta name="twitter:description" content="从今天起，我打算放弃折腾neovim了。当然并不是说neovim不好，相反它很好，无需鼠标，仅用键盘作为输入的唯一操作方式，这是非一般的体验。我也一直希望能把它作为我的主力编辑器使用，唯一的缺点是配置太繁琐了，不管是LSP，还是Lazygit都折腾的我头大。除此之外，浩如烟海的快捷键实在是太难记了，每种插件都有一堆快捷键，每个插件都有自定义的配置，感觉以我现在的水平还不足以驾驭它，因此先将其搁置一边，专心敲代码趴。但Vim模式还是很香的，我现在用Vscode作为主力编辑器，同时搭配Vim插件，说实话体验还不赖，就是不能像neovim一样用键盘掌控一切，其实理论上可行，但还需要学习一些Vscode的快捷键，有点烦，有点乱。\n"><meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:image" content='https://codersgl.github.io/blog/posts/a_hard_decision/cover.jpg' />
+<meta name="twitter:description" content="首先配置C/C++的插件，然后执行Ctrl+Shift+B执行生成任务，注意此时焦点一定要将待执行的文件上，否则会报错。\n然后，生成lunch.json文件，下面是我的配置模板，该模板可复用，但我现在使用的是WSL环境，不用的操作系统细节可能有些不同。主要的修改点在&quot;program&quot;: &quot;${workspaceRoot}/${fileBasenameNoExtension}&quot;和&quot;miDebuggerPath&quot;: &quot;/usr/bin/gdb&quot;，前者的意思是调试工作目录下的当前可执行文件，后者是你的GDB路径，在Linux下执行which gdb即可得到，如果没有出现路径，安装GDB即可。\n">
     <link rel="shortcut icon" href="/blog/favicon.ico" />
 <link rel="stylesheet" href="/blog/fonts/LXGW/lxgw.css" />
 <style>
@@ -426,27 +425,15 @@
 
 
             <main class="main full-width">
-    <article class="has-image main-article">
+    <article class="main-article">
     <header class="article-header">
-        <div class="article-image">
-            <a href="/blog/posts/a_hard_decision/">
-                <img src="/blog/posts/a_hard_decision/cover.jpg"
-                        
-                        width="3995" 
-                        height="2579" 
-                        loading="lazy"
-                        alt="Featured image of post 一个艰难的决定" />
-                
-            </a>
-        </div>
-    
 
     <div class="article-details">
     
     <header class="article-category">
         
-            <a href="/blog/categories/jotting/" style="background-color: #2a9d7eff; color: #fff;">
-                Jotting
+            <a href="/blog/categories/tools/" style="background-color: #df7988; color: #fff;">
+                Tools
             </a>
         
     </header>
@@ -454,7 +441,7 @@
 
     <div class="article-title-wrapper">
         <h2 class="article-title">
-            <a href="/blog/posts/a_hard_decision/">一个艰难的决定</a>
+            <a href="/blog/posts/config_c_language_in_vscode/">VSCode中配置C/C&#43;&#43;运行和调试环境</a>
         </h2>
     
         
@@ -476,7 +463,7 @@
   <path d="M3 11h16" />
   <path d="M18 16.496v1.504l1 1" />
 </svg>
-                <time class="article-time--published" datetime='2026-01-06T00:07:21&#43;08:00'>Jan 06, 2026</time>
+                <time class="article-time--published" datetime='2026-01-06T17:52:23&#43;08:00'>Jan 06, 2026</time>
             </div>
         
 
@@ -491,7 +478,7 @@
 
 
                 <time class="article-time--reading">
-                    阅读时长: 1 分钟
+                    阅读时长: 2 分钟
                 </time>
             </div>
         
@@ -506,11 +493,82 @@
     <section class="article-content">
     
     
-    <p>从今天起，我打算放弃折腾<code>neovim</code>了。当然并不是说<code>neovim</code>不好，相反它很好，无需鼠标，仅用键盘作为输入的唯一操作方式，这是非一般的体验。我也一直希望能把它作为我的主力编辑器使用，唯一的缺点是配置太繁琐了，不管是LSP，还是Lazygit都折腾的我头大。除此之外，浩如烟海的快捷键实在是太难记了，每种插件都有一堆快捷键，每个插件都有自定义的配置，感觉以我现在的水平还不足以驾驭它，因此先将其搁置一边，专心敲代码趴。但<code>Vim</code>模式还是很香的，我现在用Vscode作为主力编辑器，同时搭配<code>Vim</code>插件，说实话体验还不赖，就是不能像<code>neovim</code>一样用键盘掌控一切，其实理论上可行，但还需要学习一些<code>Vscode</code>的快捷键，有点烦，有点乱。</p>
-<p>总之，事情就是这样，我暂时放弃折腾<code>neovim</code>，专心完成手上一些重要的工作，顺便水一篇博客。顺带一提，写这篇博客时还顺便学了下<code>gj</code>和<code>gk</code>可以实现视觉折行内的上下切换，蒸蚌！！!。</p>
-<blockquote>
-<p>BTW，折腾<code>neovim</code>真好玩！！！</p>
-</blockquote>
+    <p>首先配置C/C++的插件，然后执行<code>Ctrl+Shift+B</code>执行生成任务，注意此时焦点一定要将待执行的文件上，否则会报错。</p>
+<p>然后，生成<code>lunch.json</code>文件，下面是我的配置模板，该模板可复用，但我现在使用的是WSL环境，不用的操作系统细节可能有些不同。主要的修改点在<code>&quot;program&quot;: &quot;${workspaceRoot}/${fileBasenameNoExtension}&quot;</code>和<code>&quot;miDebuggerPath&quot;: &quot;/usr/bin/gdb&quot;</code>，前者的意思是调试工作目录下的当前可执行文件，后者是你的GDB路径，在Linux下执行<code>which gdb</code>即可得到，如果没有出现路径，安装GDB即可。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-json" data-lang="json"><span class="line"><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="c1">// 使用 IntelliSense 了解相关属性。
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="c1">// 悬停以查看现有属性的描述。
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="c1">// 欲了解更多信息，请访问: https://go.microsoft.com/fwlink/?linkid=830387
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="nt">&#34;version&#34;</span><span class="p">:</span> <span class="s2">&#34;0.2.0&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">  <span class="nt">&#34;configurations&#34;</span><span class="p">:</span> <span class="p">[</span>
+</span></span><span class="line"><span class="cl">    <span class="p">{</span>
+</span></span><span class="line"><span class="cl">      <span class="nt">&#34;name&#34;</span><span class="p">:</span> <span class="s2">&#34;(gdb) 启动&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">      <span class="nt">&#34;type&#34;</span><span class="p">:</span> <span class="s2">&#34;cppdbg&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">      <span class="nt">&#34;request&#34;</span><span class="p">:</span> <span class="s2">&#34;launch&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">      <span class="nt">&#34;program&#34;</span><span class="p">:</span> <span class="s2">&#34;${workspaceRoot}/${fileBasenameNoExtension}&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">      <span class="nt">&#34;args&#34;</span><span class="p">:</span> <span class="p">[],</span>
+</span></span><span class="line"><span class="cl">      <span class="nt">&#34;stopAtEntry&#34;</span><span class="p">:</span> <span class="kc">false</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">      <span class="nt">&#34;cwd&#34;</span><span class="p">:</span> <span class="s2">&#34;${fileDirname}&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">      <span class="nt">&#34;environment&#34;</span><span class="p">:</span> <span class="p">[],</span>
+</span></span><span class="line"><span class="cl">      <span class="nt">&#34;externalConsole&#34;</span><span class="p">:</span> <span class="kc">false</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">      <span class="nt">&#34;MIMode&#34;</span><span class="p">:</span> <span class="s2">&#34;gdb&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">      <span class="nt">&#34;miDebuggerPath&#34;</span><span class="p">:</span> <span class="s2">&#34;/usr/bin/gdb&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">      <span class="nt">&#34;setupCommands&#34;</span><span class="p">:</span> <span class="p">[</span>
+</span></span><span class="line"><span class="cl">        <span class="p">{</span>
+</span></span><span class="line"><span class="cl">          <span class="nt">&#34;description&#34;</span><span class="p">:</span> <span class="s2">&#34;为 gdb 启用整齐打印&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">          <span class="nt">&#34;text&#34;</span><span class="p">:</span> <span class="s2">&#34;-enable-pretty-printing&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">          <span class="nt">&#34;ignoreFailures&#34;</span><span class="p">:</span> <span class="kc">true</span>
+</span></span><span class="line"><span class="cl">        <span class="p">},</span>
+</span></span><span class="line"><span class="cl">        <span class="p">{</span>
+</span></span><span class="line"><span class="cl">          <span class="nt">&#34;description&#34;</span><span class="p">:</span> <span class="s2">&#34;将反汇编风格设置为 Intel&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">          <span class="nt">&#34;text&#34;</span><span class="p">:</span> <span class="s2">&#34;-gdb-set disassembly-flavor intel&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">          <span class="nt">&#34;ignoreFailures&#34;</span><span class="p">:</span> <span class="kc">true</span>
+</span></span><span class="line"><span class="cl">        <span class="p">}</span>
+</span></span><span class="line"><span class="cl">      <span class="p">]</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">  <span class="p">]</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>值得一提的是，现在的配置文件是单文件配置，对于一个大型项目肯定包含多个C/C++文件，当前配置可能不适用，我还在探索中，有机会后面在补充。</p>
+<p>好了，这就是这篇博客的全部内容，简单讲解了一下VSCode中配置C/C++运行和调试环境的核心内容，当然还有一些前置条件没提，比如安装<code>C/C++</code>插件，配置该插件，这些请读者自行探索。</p>
 
 </section>
 
@@ -519,7 +577,7 @@
     
     <section class="article-tags">
         
-            <a href="/blog/tags/neovim/">Neovim</a>
+            <a href="/blog/tags/c/c&#43;&#43;/">C/C&#43;&#43;</a>
         
     </section>
 
