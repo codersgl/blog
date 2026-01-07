@@ -9,7 +9,42 @@ tags = ['C/C++']
 
 首先配置C/C++的插件，然后执行`Ctrl+Shift+B`执行生成任务，注意此时焦点一定要将待执行的文件上，否则会报错。
 
-然后，生成`lunch.json`文件，下面是我的配置模板，该模板可复用，但我现在使用的是WSL环境，不用的操作系统细节可能有些不同。主要的修改点在`"program": "${workspaceRoot}/${fileBasenameNoExtension}"`和`"miDebuggerPath": "/usr/bin/gdb"`，前者的意思是调试工作目录下的当前可执行文件，后者是你的GDB路径，在Linux下执行`which gdb`即可得到，如果没有出现路径，安装GDB即可。
+修改生成的`task.json`
+```json
+{
+  "tasks": [
+    {
+      "type": "cppbuild",
+      "label": "C/C++: gcc 生成活动文件",
+      "command": "/usr/bin/gcc",
+      "args": [
+        "-fdiagnostics-color=always",
+        "-g",
+        "${file}",
+        "-o",
+        "${workspaceFolder}/build/${fileBasenameNoExtension}"
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "problemMatcher": ["$gcc"],
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      },
+      "detail": "调试器生成的任务。",
+    }
+  ],
+  "version": "2.0.0"
+}
+```
+修改两处：
+- "args':`"${filenamedir}/${fileBasenameNoExtension}"`修改为`"${workspaceFolder}/bulid/${fileBasenameNoExtension}"`，让生成的可执行文件存放在固定文件夹下，方便整理
+- "cwd": `"${filenamedir}`修改为`${workspaceFolder}`，将命令行目录改为工作区目录
+
+然后，生成`lunch.json`文件，下面是我的配置模板，该模板可复用，但我现在使用的是WSL环境，不用的操作系统细节可能有些不同。主要的修改点在`"program": "${workspaceRoot}/build/${fileBasenameNoExtension}"`和`"miDebuggerPath": "/usr/bin/gdb"`，前者的意思是调试工作目录下的`build`文件夹下的可执行文件，后者是你的GDB路径，在Linux下执行`which gdb`即可得到，如果没有出现路径，安装GDB即可。
+
+这里补充一下，修改`"cwd": "${workspaceFolder}/build"`与`task.json`同步,
 
 ```json
 {
@@ -22,10 +57,10 @@ tags = ['C/C++']
       "name": "(gdb) 启动",
       "type": "cppdbg",
       "request": "launch",
-      "program": "${workspaceRoot}/${fileBasenameNoExtension}",
+      "program": "${workspaceRoot}/build/${fileBasenameNoExtension}",
       "args": [],
       "stopAtEntry": false,
-      "cwd": "${fileDirname}",
+      "cwd": "${workspaceFolder}/build",
       "environment": [],
       "externalConsole": false,
       "MIMode": "gdb",

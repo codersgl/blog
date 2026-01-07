@@ -2,53 +2,50 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
-    <loc>http://localhost:1313/blog/</loc>
+    <loc>https://codersgl.github.io/blog/</loc>
     <lastmod>2026-01-06T18:55:14+08:00</lastmod>
   </url><url>
-    <loc>http://localhost:1313/blog/posts/my_first_essay/</loc>
+    <loc>https://codersgl.github.io/blog/posts/</loc>
     <lastmod>2026-01-06T18:55:14+08:00</lastmod>
   </url><url>
-    <loc>http://localhost:1313/blog/posts/</loc>
-    <lastmod>2026-01-06T18:55:14+08:00</lastmod>
-  </url><url>
-    <loc>http://localhost:1313/blog/tags/c/c&#43;&#43;/</loc>
+    <loc>https://codersgl.github.io/blog/tags/c/c&#43;&#43;/</loc>
     <lastmod>2026-01-06T17:52:23+08:00</lastmod>
   </url><url>
-    <loc>http://localhost:1313/blog/categories/</loc>
+    <loc>https://codersgl.github.io/blog/categories/</loc>
     <lastmod>2026-01-06T17:52:23+08:00</lastmod>
   </url><url>
-    <loc>http://localhost:1313/blog/tags/</loc>
+    <loc>https://codersgl.github.io/blog/tags/</loc>
     <lastmod>2026-01-06T17:52:23+08:00</lastmod>
   </url><url>
-    <loc>http://localhost:1313/blog/categories/tools/</loc>
+    <loc>https://codersgl.github.io/blog/categories/tools/</loc>
     <lastmod>2026-01-06T17:52:23+08:00</lastmod>
   </url><url>
-    <loc>http://localhost:1313/blog/posts/config_c_language_in_vscode/</loc>
+    <loc>https://codersgl.github.io/blog/posts/config_c_language_in_vscode/</loc>
     <lastmod>2026-01-06T17:52:23+08:00</lastmod>
   </url><url>
-    <loc>http://localhost:1313/blog/categories/jotting/</loc>
+    <loc>https://codersgl.github.io/blog/categories/jotting/</loc>
     <lastmod>2026-01-06T00:07:21+08:00</lastmod>
   </url><url>
-    <loc>http://localhost:1313/blog/tags/neovim/</loc>
+    <loc>https://codersgl.github.io/blog/tags/neovim/</loc>
     <lastmod>2026-01-06T00:07:21+08:00</lastmod>
   </url><url>
-    <loc>http://localhost:1313/blog/posts/a_hard_decision/</loc>
+    <loc>https://codersgl.github.io/blog/posts/a_hard_decision/</loc>
     <lastmod>2026-01-06T00:07:21+08:00</lastmod>
   </url><url>
-    <loc>http://localhost:1313/blog/page/links/</loc>
+    <loc>https://codersgl.github.io/blog/page/links/</loc>
   </url><url>
-    <loc>http://localhost:1313/blog/page/archives/</loc>
+    <loc>https://codersgl.github.io/blog/page/archives/</loc>
   </url><url>
-    <loc>http://localhost:1313/blog/categories/assignments/</loc>
+    <loc>https://codersgl.github.io/blog/categories/assignments/</loc>
   </url><url>
-    <loc>http://localhost:1313/blog/categories/codes/</loc>
+    <loc>https://codersgl.github.io/blog/categories/codes/</loc>
   </url><url>
-    <loc>http://localhost:1313/blog/categories/linux/</loc>
+    <loc>https://codersgl.github.io/blog/categories/linux/</loc>
   </url><url>
-    <loc>http://localhost:1313/blog/page/</loc>
+    <loc>https://codersgl.github.io/blog/page/</loc>
   </url><url>
-    <loc>http://localhost:1313/blog/page/search/</loc>
+    <loc>https://codersgl.github.io/blog/page/search/</loc>
   </url><url>
-    <loc>http://localhost:1313/blog/categories/tutorials/</loc>
+    <loc>https://codersgl.github.io/blog/categories/tutorials/</loc>
   </url>
 </urlset>
