@@ -26,15 +26,20 @@ image = 'cover.jpeg'
 简而言之，DSGCNet 网络的输入是一个标准的 4D PyTorch 张量，包含了一批经过预处理和归一化的 RGB 图像。
 
 具体输入格式
+
 1. 训练阶段 (Training)
 在训练时，网络接收的输入张量形状通常为：
 
 $$(B \times 4, 3, 128, 128)$$
 
-* B (Batch Size): 由 train.py 中的 --batch_size 参数控制（默认 8）。
-* 4 (Num Patches): 数据加载通过 random_crop 将每张原始图像裁剪为 4 个 patches。collate_fn_crowd_train 会将这 4 个 patch 展平并入 Batch 维度。
-* 3 (Channels): RGB 通道。
-* 128×128 (Resolution): 训练时使用固定大小的随机裁剪（在 SHHA.py 中硬编码为 128）。
+- B (Batch Size): 由 train.py 中的 --batch_size 参数控制（默认 8）。
+
+- 4 (Num Patches): 数据加载通过 random_crop 将每张原始图像裁剪为 4 个 patches。collate_fn_crowd_train 会将这 4 个 patch 展平并入 Batch 维度。
+
+- 3 (Channels): RGB 通道。
+
+- 128×128 (Resolution): 训练时使用固定大小的随机裁剪（在 SHHA.py 中硬编码为 128）。
+
 > 随机裁剪的目的：从一张大图中随机裁剪 4 个不同的区域，相当于增加了训练数据的多样性。这有助于模型学习局部特征，防止过拟合，并提高模型对不同密度分布区域的鲁棒性。
 
 数据类型: Float32。归一化: 使用 ImageNet 标准均值和方差：
@@ -46,22 +51,26 @@ Std: [0.229, 0.224, 0.225]
 
 $$(1, 3, H, W)$$
 
-* H,W: 原始图像的高度和宽度（为了处理不同尺寸，通常使用 Padding 或 Batch Size=1）。
+- H,W: 原始图像的高度和宽度（为了处理不同尺寸，通常使用 Padding 或 Batch Size=1）。
+
 > 注意: 这里的 H 和 W 会被处理成 128 的倍数（通过 padding），这在 misc.py 的 nested_tensor_from_tensor_list 中处理。
 
 辅助输入 (用于 Loss 计算)
 虽然网络前向传播 (model(samples)) 只接收图像张量，但在训练循环 (engine.py) 中，还需要以下数据来计算损失：
-* Ground Truth Density Map (gt_dmap): 形状对应于输入图像，用于监督 Density Approximation 分支。
-* Point Annotations (targets): 包含人员坐标点
+
+- Ground Truth Density Map (gt_dmap): 形状对应于输入图像，用于监督 Density Approximation 分支。
+
+- Point Annotations (targets): 包含人员坐标点
 (point)，用于监督 Representation Approximation 分支和分类/回归损失。
 
 ### Net info
 
 #### DSGC-Net
 
-![DSGCNet_architecture](DSGCNet_architecture.png "DSGCNet_architecture") 
+![DSGCNet_architecture](DSGCNet_architecture.png "DSGCNet_architecture")
 
 这是DSGC-Net的网络定义
+
 ```python
 class DSGCnet(nn.Module):
     def __init__(self, backbone, row=2, line=2):
@@ -145,6 +154,7 @@ if __name__ == "__main__":
 ```
 
 输出如下:
+
 ```text
 ==========================================================================================
 Layer (type:depth-idx)                   Output Shape              Param #
@@ -313,6 +323,7 @@ Estimated Total Size (MB): 185.31
 ![DSU-Net Architecture](DSU-Net.png "DSU-Net Architecture")
 
 这是DGSU-Net的网络定义：
+
 ```python
 class DGSUNet(nn.Module):
     def __init__(
@@ -383,15 +394,16 @@ class DGSUNet(nn.Module):
 
 根据 DGSUNet.py 和测试脚本，输入形状规定如下：
 
-1.  **`x_dino` (DiNOv2 输入)**: `(B, 3, 518, 518)`
-    *   主要用于语义特征提取。
-    *   分辨率固定为 518x518。
+1. **`x_dino` (DiNOv2 输入)**: `(B, 3, 518, 518)`
+    - 主要用于语义特征提取。
+    - 分辨率固定为 518x518。
 
-2.  **`x_sam` (SAM2 输入)**: `(B, 3, 352, 352)`
-    *   主要用于细粒度细节提取。
-    *   分辨率固定为 352x352。
+2. **`x_sam` (SAM2 输入)**: `(B, 3, 352, 352)`
+    - 主要用于细粒度细节提取。
+    - 分辨率固定为 352x352。
 
 **代码示例:**
+
 ```python
 # B=Batch size (e.g., 1)
 x_dino = torch.randn(1, 3, 518, 518).cuda()
@@ -638,34 +650,37 @@ torch.Size([1, 1, 352, 352]) torch.Size([1, 1, 352, 352]) torch.Size([1, 1, 352,
 可以看到，在特征提取部分经过一个`CGA`模块融合两个分支的特征后，最终的形状为`[1, 1152, 11, 11]`，而我们的目标是`[1, 256, 16, 16]`，因此需要进行维度处理。
 
 > 为什么这里使用CGA融合模块？
-> 
+>
 > 在 `DGSUNet` 中使用 **CGAFusion** (Cross-Guided Attention Fusion) 模块，是为了**自适应地融合**来自 SAM2（侧重细节和边界）与 DiNOv2（侧重高层语义）的特征。
-> 
+>
 > 简单来说，简单的相加或拼接无法区分两个骨干网络的优劣，而 `CGAFusion` 通过注意力机制让网络自己“决定”在每个像素点上更应该相信 SAM2 还是 DiNOv2。
-> 
+>
 > 具体原因和机制如下：
-> 1.  **特征优势互补**：
->     *   **SAM2 (x)**：在分割任务中，擅长捕捉细粒度的边界和形状信息。
->     *   **DiNOv2 (y)**：在大规模数据上预训练，拥有极强的语义理解能力。
->     *   **CGAFusion** 的作用就是将这两者的长处结合起来。
-> 
-> 2.  **三维注意力机制（Channel, Spatial, Pixel）**：
+>
+> 1. **特征优势互补**：
+>     - **SAM2 (x)**：在分割任务中，擅长捕捉细粒度的边界和形状信息。
+>     - **DiNOv2 (y)**：在大规模数据上预训练，拥有极强的语义理解能力。
+>     - **CGAFusion** 的作用就是将这两者的长处结合起来。
+>
+> 2. **三维注意力机制（Channel, Spatial, Pixel）**：
 >     代码 (CGAFusion.py) 显示该模块实际上串联了三种注意力：
->     *   **Channel Attention (`ca`)**：识别哪些特征通道更重要（主要关注“是什么”）。
->     *   **Spatial Attention (`sa`)**：识别图像中哪些区域更重要（主要关注“在哪里”）。
->     *   **Pixel Attention (`pa`)**：结合上述信息生成像素级的权重图。
-> 
-> 3.  **门控融合机制 (Gated Fusion)**：
+>     - **Channel Attention (`ca`)**：识别哪些特征通道更重要（主要关注“是什么”）。
+>     - **Spatial Attention (`sa`)**：识别图像中哪些区域更重要（主要关注“在哪里”）。
+>     - **Pixel Attention (`pa`)**：结合上述信息生成像素级的权重图。
+>
+> 3. **门控融合机制 (Gated Fusion)**：
 >     模块最核心的公式如下：
+>
 >     ```python
 >     # pattn2 是经过 Sigmoid 生成的 0~1 之间的权重图
 >     result = initial + pattn2 * x + (1 - pattn2) * y
 >     ```
->     *   这意味着网络为每个位置生成了一个权重 `pattn2`。
->     *   如果 `pattn2` 接近 1，主要保留 **SAM2 (x)** 的特征。
->     *   如果 `pattn2` 接近 0，主要保留 **DiNOv2 (y)** 的特征。
->     *   这种软选择（Soft Selection）机制比硬性的 `Add` 或 `Concat` 更灵活，能有效减少特征冲突。
-> 
+>
+>     - 这意味着网络为每个位置生成了一个权重 `pattn2`。
+>     - 如果 `pattn2` 接近 1，主要保留 **SAM2 (x)** 的特征。
+>     - 如果 `pattn2` 接近 0，主要保留 **DiNOv2 (y)** 的特征。
+>     - 这种软选择（Soft Selection）机制比硬性的 `Add` 或 `Concat` 更灵活，能有效减少特征冲突。
+>
 > **总结：**
 > 使用 CGAFusion 是为了**智能地**解决双骨干网络（Dual Backbone）特征融合的问题，确保模型既有 SAM2 的精准边缘，又有 DiNOv2 的丰富语义。
 
@@ -678,20 +693,25 @@ torch.Size([1, 1, 352, 352]) torch.Size([1, 1, 352, 352]) torch.Size([1, 1, 352,
 欸，`DSU-Net`中有个`RFB`模块很有意思，似乎能调整通道数。
 
 > **RFB (Receptive Field Block)** 模块的主要作用是**增强特征提取能力**，通过模拟人类视觉的感受野机制，使网络能够同时捕获多尺度的上下文信息。
-> 
+>
 > 在这个 `DGSUNet` 网络中，RFB 模块具体扮演了以下两个关键角色：
-> 
+>
 > 1. 扩大感受野 (Expand Receptive Field)
 > 代码显示 `RFB_modified` 包含四个并行的分支 (`branch0` ~ `branch3`)，它们使用了不同的膨胀卷积（Dilated Convolution）率：
-> *   **Branch 0**: 1x1 卷积（基础特征）。
-> *   **Branch 1**: 膨胀率 `dilation=3`。
-> *   **Branch 2**: 膨胀率 `dilation=5`。
-> *   **Branch 3**: 膨胀率 `dilation=7`。
-> 
+>
+> - **Branch 0**: 1x1 卷积（基础特征）。
+>
+> - **Branch 1**: 膨胀率 `dilation=3`。
+>
+> - **Branch 2**: 膨胀率 `dilation=5`。
+>
+> - **Branch 3**: 膨胀率 `dilation=7`。
+>
 > 通过将这些不同“视野”范围提取到的特征拼接在一起，网络既能看到局部细节（小感受野），也能感知更大的上下文环境（大感受野），这对于分割不同大小的目标至关重要。
-> 
+>
 > 2. 统一通道数 (Channel Adaptation)
 > 在 DGSUNet.py 中，你可以看到 RFB 连接在骨干网络（Backbone）和解码器（Decoder）之间：
+>
 > ```python
 > # 骨干网络输出的不同尺度的通道数
 > # x1: 144, x2: 288, x3: 576, x4: 1152
@@ -699,12 +719,15 @@ torch.Size([1, 1, 352, 352]) torch.Size([1, 1, 352, 352]) torch.Size([1, 1, 352,
 > self.rfb2 = RFB.RFB_modified(288, 64)   # 输出 64
 > # ...
 > ```
+>
 > 它将骨干网络输出的**不一致的通道数**（如 144, 288, 576, 1152）全部降维并统映射到 **64** 个通道。这样做是为了方便后续解码器 (`SFF` 模块) 进行逐级上采样和融合。
-> 
+>
 > 总结
 > 简单来说，RFB 在这里起到了 **“承上启下”** 的作用：
-> *   **承上**：接收骨干网络的特征，利用多分支空洞卷积使其包含更丰富的尺度信息。
-> *   **启下**：把特征压缩成统一的厚度（Channel=64），喂给解码器生成最终的分割图。
+>
+> - **承上**：接收骨干网络的特征，利用多分支空洞卷积使其包含更丰富的尺度信息。
+>
+> - **启下**：把特征压缩成统一的厚度（Channel=64），喂给解码器生成最终的分割图。
 
 通过这个模块不就可以让`channels=1152`变成`channels=256`吗？
 
@@ -940,50 +963,60 @@ def random_crop(img, den, num_patch=4):
 
     return result_img, result_den
 ```
+
 > 为什么要这样修改?
-> 
+>
 > 这是一个非常好的问题！理解“为什么要改”比“知道怎么改”更重要，因为这涉及到深度学习中数据、模型和损失函数之间的<u>对齐（Alignment）</u>原则。
-> 
+>
 > 之所以要这改这 5 处代码，是因为你把模型的输入尺寸（Input Size）从 **128 改为了 224**。这一变动引发了**连锁反应**，必须在数据处理的每一个环节都进行同步调整，否则会导致模型“看”到的是错的图片，或者“学”到的是错的标签。
-> 
+>
 > 我把这 5 个修改点背后的**数学和逻辑原因**拆解给你看：
-> 
+>
 > ---
-> 
+>
 > 1. 修改 `random_crop` 函数中的尺寸 (128 -> 224)
-> *   **原因**：为了喂给 Transformer (ViT) 骨干网络。
-> *   **解释**：DSU-Net 用的 Dinov2 和 SAM2 是基于 Vision Transformer 的。它们把图片切成一个个 $14 \times 14$ 的小方块（Patch）。
->     *   如果你用原来的 **128**：$128 \div 14 \approx 9.14$。切不整齐，边缘必须补零（Padding），这会引入无意义的黑边，干扰特征提取。
->     *   改为 **224**：$224 \div 14 = 16$。刚好切成 $16 \times 16$ 个 Patch，完美适配。这也是 ImageNet 预训练的标准尺寸。
-> 
+>
+> - **原因**：为了喂给 Transformer (ViT) 骨干网络。
+>
+> - **解释**：DSU-Net 用的 Dinov2 和 SAM2 是基于 Vision Transformer 的。它们把图片切成一个个 $14 \times 14$ 的小方块（Patch）。
+>   - 如果你用原来的 **128**：$128 \div 14 \approx 9.14$。切不整齐，边缘必须补零（Padding），这会引入无意义的黑边，干扰特征提取。
+>     - 改为 **224**：$224 \div 14 = 16$。刚好切成 $16 \times 16$ 个 Patch，完美适配。这也是 ImageNet 预训练的标准尺寸。
+>
 > 2. 修改 Scale 缩放逻辑 (`> CROP_SIZE`)
-> *   **原因**：防止程序崩溃（Index Error）。
-> *   **解释**：`random_crop` 是从大图里随机抠一个小图。
->     *   如果你把图缩放到只剩 150 像素宽，然后让程序去抠一个 224 像素的块，程序就会报错（因为图不够大，抠不出来）。
->     *   因此，必须保证缩放后的图**至少**比我们要抠的尺寸（224）大。
-> 
+>
+> - **原因**：防止程序崩溃（Index Error）。
+>
+> - **解释**：`random_crop` 是从大图里随机抠一个小图。
+>   - 如果你把图缩放到只剩 150 像素宽，然后让程序去抠一个 224 像素的块，程序就会报错（因为图不够大，抠不出来）。
+>     - 因此，必须保证缩放后的图**至少**比我们要抠的尺寸（224）大。
+>
 > 3. 修改 Flip 翻转坐标 (`CROP_SIZE - x`)
-> *   **原因**：保证坐标变换的几何正确性。
-> *   **解释**：这就像照镜子。
->     *   如果你在一张宽 128 的纸上画个点，坐标是 $x=10$。水平翻转后，新坐标是 $128 - 10 = 118$。
->     *   现在纸变宽了（224），同样的翻转，新坐标应该是 $224 - 10 = 214$。
->     *   如果你还用旧公式 $128 - 10 = 118$，这个点就跑到图片中间左边去了，而图片内容其实已经翻转到了最右边。**点和人就对不上了**，模型会学废。
-> 
+>
+> - **原因**：保证坐标变换的几何正确性。
+>
+> - **解释**：这就像照镜子。
+>   - 如果你在一张宽 128 的纸上画个点，坐标是 $x=10$。水平翻转后，新坐标是 $128 - 10 = 118$。
+>     - 现在纸变宽了（224），同样的翻转，新坐标应该是 $224 - 10 = 214$。
+>     - 如果你还用旧公式 $128 - 10 = 118$，这个点就跑到图片中间左边去了，而图片内容其实已经翻转到了最右边。**点和人就对不上了**，模型会学废。
+>
 > 4. 修改 GT Density Map 生成逻辑 (Sum Pooling Stride)
-> *   **这是最关键的修改！**
-> *   **原因**：保证 Ground Truth (标签) 和 模型预测输出 (Prediction) 的**总能量守恒**。
-> *   **解释**：
->     *   你的模型输出是固定的 $16 \times 16$ 网格。
->     *   **旧逻辑**：输入 $128 \times 128$。要把 128 压缩成 16，每个网格就要“管” $128/16 = \mathbf{8}$ 个像素宽的区域。所以我们对 GT 进行 $8 \times 8$ 的求和池化。
->     *   **新逻辑**：输入 $224 \times 224$。要把 224 压缩成 16，每个网格就要“管” $224/16 = \mathbf{14}$ 个像素宽的区域。
->     *   如果你输入 224 的图，却还按 8倍下采样生成 GT，你的 GT 尺寸会变成 $224/8 = 28 \times 28$。
->     *   **后果**：模型输出 $16 \times 16$，标签却是 $28 \times 28$。Loss 函数（如 MSE Loss）一计算就会直接报错：`RuntimeError: The size of tensor a (16) must match the size of tensor b (28)`。
-> 
+>
+> - **这是最关键的修改！**
+>
+> - **原因**：保证 Ground Truth (标签) 和 模型预测输出 (Prediction) 的**总能量守恒**。
+>
+> - **解释**：
+>   - 你的模型输出是固定的 $16 \times 16$ 网格。
+>     - **旧逻辑**：输入 $128 \times 128$。要把 128 压缩成 16，每个网格就要“管” $128/16 = \mathbf{8}$ 个像素宽的区域。所以我们对 GT 进行 $8 \times 8$ 的求和池化。
+>     - **新逻辑**：输入 $224 \times 224$。要把 224 压缩成 16，每个网格就要“管” $224/16 = \mathbf{14}$ 个像素宽的区域。
+>     - 如果你输入 224 的图，却还按 8倍下采样生成 GT，你的 GT 尺寸会变成 $224/8 = 28 \times 28$。
+>     - **后果**：模型输出 $16 \times 16$，标签却是 $28 \times 28$。Loss 函数（如 MSE Loss）一计算就会直接报错：`RuntimeError: The size of tensor a (16) must match the size of tensor b (28)`。
+>
 > 总结
 > 这一系列修改的核心逻辑是：
 > **牵一发而动全身**。
 > 一旦输入尺寸变了（为了适配新骨干），虽然输出尺寸想保持不变（为了适配旧后端），但中间所有的**坐标映射**（翻转）、**空间映射**（Crop）和**标签映射**（GT生成）的比例系数全都要跟着变。
-> 
+>
 > 不做这些修改，代码要么跑不起来（报错），要么跑起来训练效果极差（坐标错位）。
 
 输入搞定了，接下来就是中间的对接了，已知DSU-Net的特征提取后的分辨率为`11x11`，而目标分辨率为`16x16`，故而需要一个适应层来调整分辨率。
@@ -991,6 +1024,7 @@ def random_crop(img, den, num_patch=4):
 在参考了ai的建议后，我决定使用`RFB+Bilinear`的方案，通过RFB模块调整通道数，利用双线性插值调整分辨率。
 
 参考代码如下：
+
 ```python
 import torch.nn as nn
 from models.RFB import RFB_modified
@@ -1011,12 +1045,313 @@ class Adapter_RFB(nn.Module):
         return x
 ```
 
+在改代码，SAM2环境出了点问题，之前也碰到过，这里记录一下。
+
+```toml
+"iopath>=0.1.10",
+```
+
+为了将`sam2dinov2`的相关模块导入`DSGC-Net`除了复制相关文件外，还要修改`pyproject.toml`以更新环境，重要的是添加新的模块。
+
+```toml
+[project]
+name = "crowdcounting-dsgcnet-main"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "einops>=0.8.1",
+    "hydra-core>=1.3.2",
+    "iopath>=0.1.10",
+    "loguru>=0.7.3",
+    "matplotlib>=3.9.4",
+    "numpy>=2.0.2",
+    "omegaconf>=2.3.0",
+    "opencv-python>=4.11.0.86",
+    "pandas>=2.3.3",
+    "pytorch-wavelets>=1.3.0",
+    "pywavelets>=1.6.0",
+    "scipy>=1.13.1",
+    "tensorboard>=2.20.0",
+    "tensorboardx>=2.6.4",
+    "timm>=1.0.22",
+    "torch>=2.8.0",
+    "torch-geometric>=2.6.1",
+    "torchinfo>=1.8.0",
+    "torchsummary>=1.5.1",
+    "torchvision>=0.23.0",
+    "tqdm>=4.67.1",
+]
+
+[[tool.uv.index]]
+url = "https://pypi.tuna.tsinghua.edu.cn/simple"
+default = true
+
+[tool.setuptools]
+packages = ["util", "models", "crowd_datasets", "sam2", "sam2_configs", "sam2dino_seg"]
+```
+
+#### 新模型
+
+修改后的网络情况
+
+```python
+class DSGCnet(nn.Module):
+    def __init__(
+        self,
+        dino_model_name=None,
+        dino_hub_dir=None,
+        sam_config_file=None,
+        sam_ckpt_path=None,
+        row=2,
+        line=2,
+    ):
+        super().__init__()
+        if dino_model_name is None:
+            print("No model_name specified, using default")
+            dino_model_name = "dinov2_vitl14"
+        if dino_hub_dir is None:
+            print("No dino_hub_dir specified, using default")
+            dino_hub_dir = "facebookresearch/dinov2"
+        if sam_config_file is None:
+            print("No sam_config_file specified, using default")
+            # Replace with your own SAM configuration file path
+            sam_config_file = r"../sam2_configs/sam2.1_hiera_l.yaml"
+        if sam_ckpt_path is None:
+            print("No sam_ckpt_path specified, using default")
+            # Replace with your own SAM pt file path
+            sam_ckpt_path = r"checkpoints/sam2.1_hiera_large.pt"
+
+        self.backbone_dino = dinov2_extract.DinoV2FeatureExtractor(
+            model_name=dino_model_name, hub_dir=dino_hub_dir
+        )
+        self.backbone_sam = sam2hiera.sam2hiera(sam_config_file, sam_ckpt_path)
+        # Feature Fusion
+        self.fusion4 = CGAFusion.CGAFusion(1152)
+        # (1024,37,37)->(1024,11,11)
+        self.dino2sam_down4 = updown.interpolate_upsample(11)
+        # (1024,11,11)->(1152,11,11)
+        self.dino2sam_down14 = wtconv.DepthwiseSeparableConvWithWTConv2d(
+            in_channels=1024, out_channels=1152
+        )
+        self.rfb4 = RFB.RFB_modified(1152, 256)
+        self.upsample = nn.Upsample(size=(16, 16), mode="bilinear", align_corners=False)
+        self.num_classes = 2
+        num_anchor_points = row * line
+
+        self.fusion_total = nn.Sequential(
+            nn.Conv2d(3 * 256, 256, kernel_size=1),
+            nn.BatchNorm2d(256),
+            nn.ReLU(inplace=True),
+        )
+        self.regression = RegressionModel(
+            num_features_in=256, num_anchor_points=num_anchor_points
+        )
+        self.classification = ClassificationModel(
+            num_features_in=256,
+            num_classes=self.num_classes,
+            num_anchor_points=num_anchor_points,
+        )
+
+        self.anchor_points = AnchorPoints(
+            pyramid_levels=[
+                3,
+            ],
+            row=row,
+            line=line,
+        )
+
+        self.pa = Decoder_SPD_PAFPN(256, 512, 512)
+        self.density_pred = Density_pred()
+        self.density_gcn = DensityGCNProcessor(k=4)
+        self.feature_gcn = FeatureGCNProcessor(k=4)
+        self.alpha = nn.Parameter(
+            torch.tensor([1.0, 1.0], dtype=torch.float32, requires_grad=True)
+        )
+
+    def forward(self, x_dino, x_sam, samples):
+        # Backbone Feature Extractor
+        x1, x2, x3, x4 = self.backbone_sam(x_sam)
+        features = [x1, x2, x3, x4]
+        x_dino = self.backbone_dino(x_dino)
+        # change dino feature map size and dimension
+        x_dino4 = self.dino2sam_down4(x_dino)
+        x_dino4 = self.dino2sam_down14(x_dino4)
+        # Feature Fusion(sam & dino)
+        x4 = self.fusion4(x4, x_dino4)
+        # change fusion feature map dimension->(64,11/22/44/88,11/22/44/88)
+        x4 = self.rfb4(x4)
+        x4 = self.upsample(x4)
+
+        batch_size = features[0].shape[0]
+        density = self.density_pred(x4)
+        density_gcn_feature = self.density_gcn(density, x4)
+        feature_gcn_feature = self.feature_gcn(x4)
+        feature_fl = (
+            x4
+            + self.alpha[0] * density_gcn_feature
+            + self.alpha[1] * feature_gcn_feature
+        )
+        regression = self.regression(feature_fl) * 100
+        classification = self.classification(feature_fl)
+        anchor_points = self.anchor_points(samples).repeat(batch_size, 1, 1)
+        output_coord = regression + anchor_points
+        output_class = classification
+        out = {
+            "pred_logits": output_class,
+            "pred_points": output_coord,
+            "density_out": density,
+        }
+
+        return out
+```
+
+下面是数据在网络中的流动情况，执行一下代码即可：
+
+```python
+import torch
+from torchinfo import summary
+from models.DSGCnet_modify import DSGCnet
+
+if __name__ == "__main__":
+    with torch.inference_mode():
+        device = "cuda" if torch.cuda.is_available() else "cpu"
+        x = torch.randn(1, 3, 128, 128).to(device)
+        x_dino = torch.randn(1, 3, 518, 518).to(device)
+        x_sam = torch.randn(1, 3, 352, 352).to(device)
+        dsgc_net = DSGCnet().to(device)
+        summary(dsgc_net, input_data=(x_dino, x_sam, x))
+
+```
+
+output:
+
+```text
+==============================================================================================================
+Layer (type:depth-idx)                                       Output Shape              Param #
+==============================================================================================================
+DSGCnet                                                      [1, 1, 16, 16]            3,022,338
+├─sam2hiera: 1-1                                             [1, 144, 88, 88]          --
+│    └─Hiera: 2-1                                            [1, 144, 88, 88]          16,272
+│    │    └─PatchEmbed: 3-1                                  [1, 88, 88, 144]          (21,312)
+│    │    └─Sequential: 3-2                                  --                        213,826,128
+├─DinoV2FeatureExtractor: 1-2                                [1, 1024, 37, 37]         --
+│    └─DinoVisionTransformer: 2-2                            --                        1,404,928
+│    │    └─PatchEmbed: 3-3                                  [1, 1369, 1024]           (603,136)
+│    │    └─ModuleList: 3-4                                  --                        (302,358,528)
+│    │    └─LayerNorm: 3-5                                   [1, 1370, 1024]           (2,048)
+├─interpolate_upsample: 1-3                                  [1, 1024, 11, 11]         --
+├─DepthwiseSeparableConvWithWTConv2d: 1-4                    [1, 1152, 11, 11]         --
+│    └─WTConv2d: 2-3                                         [1, 1024, 11, 11]         32,768
+│    │    └─ModuleList: 3-6                                  --                        36,864
+│    │    └─ModuleList: 3-7                                  --                        4,096
+│    │    └─Conv2d: 3-8                                      [1, 1024, 11, 11]         10,240
+│    │    └─_ScaleModule: 3-9                                [1, 1024, 11, 11]         1,024
+│    └─Conv2d: 2-4                                           [1, 1152, 11, 11]         1,179,648
+│    └─BatchNorm2d: 2-5                                      [1, 1152, 11, 11]         2,304
+│    └─ReLU: 2-6                                             [1, 1152, 11, 11]         --
+├─CGAFusion: 1-5                                             [1, 1152, 11, 11]         --
+│    └─ChannelAttention: 2-7                                 [1, 1152, 1, 1]           --
+│    │    └─AdaptiveAvgPool2d: 3-10                          [1, 1152, 1, 1]           --
+│    │    └─Sequential: 3-11                                 [1, 1152, 1, 1]           333,072
+│    └─SpatialAttention: 2-8                                 [1, 1, 11, 11]            --
+│    │    └─Conv2d: 3-12                                     [1, 1, 11, 11]            99
+│    └─PixelAttention: 2-9                                   [1, 1152, 11, 11]         --
+│    │    └─Conv2d: 3-13                                     [1, 1152, 11, 11]         114,048
+│    │    └─Sigmoid: 3-14                                    [1, 1152, 11, 11]         --
+│    └─Sigmoid: 2-10                                         [1, 1152, 11, 11]         --
+│    └─Conv2d: 2-11                                          [1, 1152, 11, 11]         1,328,256
+├─RFB_modified: 1-6                                          [1, 256, 11, 11]          --
+│    └─Sequential: 2-12                                      [1, 256, 11, 11]          --
+│    │    └─BasicConv2d: 3-15                                [1, 256, 11, 11]          295,424
+│    └─Sequential: 2-13                                      [1, 256, 11, 11]          --
+│    │    └─BasicConv2d: 3-16                                [1, 256, 11, 11]          295,424
+│    │    └─BasicConv2d: 3-17                                [1, 256, 11, 11]          197,120
+│    │    └─BasicConv2d: 3-18                                [1, 256, 11, 11]          197,120
+│    │    └─BasicConv2d: 3-19                                [1, 256, 11, 11]          590,336
+│    └─Sequential: 2-14                                      [1, 256, 11, 11]          --
+│    │    └─BasicConv2d: 3-20                                [1, 256, 11, 11]          295,424
+│    │    └─BasicConv2d: 3-21                                [1, 256, 11, 11]          328,192
+│    │    └─BasicConv2d: 3-22                                [1, 256, 11, 11]          328,192
+│    │    └─BasicConv2d: 3-23                                [1, 256, 11, 11]          590,336
+│    └─Sequential: 2-15                                      [1, 256, 11, 11]          --
+│    │    └─BasicConv2d: 3-24                                [1, 256, 11, 11]          295,424
+│    │    └─BasicConv2d: 3-25                                [1, 256, 11, 11]          459,264
+│    │    └─BasicConv2d: 3-26                                [1, 256, 11, 11]          459,264
+│    │    └─BasicConv2d: 3-27                                [1, 256, 11, 11]          590,336
+│    └─BasicConv2d: 2-16                                     [1, 256, 11, 11]          --
+│    │    └─Conv2d: 3-28                                     [1, 256, 11, 11]          2,359,296
+│    │    └─BatchNorm2d: 3-29                                [1, 256, 11, 11]          512
+│    └─BasicConv2d: 2-17                                     [1, 256, 11, 11]          --
+│    │    └─Conv2d: 3-30                                     [1, 256, 11, 11]          294,912
+│    │    └─BatchNorm2d: 3-31                                [1, 256, 11, 11]          512
+│    └─ReLU: 2-18                                            [1, 256, 11, 11]          --
+├─Upsample: 1-7                                              [1, 256, 16, 16]          --
+├─Density_pred: 1-8                                          [1, 1, 16, 16]            --
+│    └─Sequential: 2-19                                      [1, 256, 16, 16]          --
+│    │    └─Conv2d: 3-32                                     [1, 256, 16, 16]          590,080
+│    │    └─BatchNorm2d: 3-33                                [1, 256, 16, 16]          512
+│    │    └─ReLU: 3-34                                       [1, 256, 16, 16]          --
+│    └─Sequential: 2-20                                      [1, 256, 16, 16]          --
+│    │    └─Conv2d: 3-35                                     [1, 256, 16, 16]          590,080
+│    │    └─BatchNorm2d: 3-36                                [1, 256, 16, 16]          512
+│    │    └─ReLU: 3-37                                       [1, 256, 16, 16]          --
+│    └─Sequential: 2-21                                      [1, 256, 16, 16]          --
+│    │    └─Conv2d: 3-38                                     [1, 256, 16, 16]          590,080
+│    │    └─BatchNorm2d: 3-39                                [1, 256, 16, 16]          512
+│    │    └─ReLU: 3-40                                       [1, 256, 16, 16]          --
+│    └─Sequential: 2-22                                      [1, 1, 16, 16]            --
+│    │    └─Conv2d: 3-41                                     [1, 128, 16, 16]          295,040
+│    │    └─BatchNorm2d: 3-42                                [1, 128, 16, 16]          256
+│    │    └─ReLU: 3-43                                       [1, 128, 16, 16]          --
+│    │    └─Conv2d: 3-44                                     [1, 64, 16, 16]           73,792
+│    │    └─BatchNorm2d: 3-45                                [1, 64, 16, 16]           128
+│    │    └─ReLU: 3-46                                       [1, 64, 16, 16]           --
+│    │    └─Conv2d: 3-47                                     [1, 1, 16, 16]            65
+│    │    └─ReLU: 3-48                                       [1, 1, 16, 16]            --
+├─DensityGCNProcessor: 1-9                                   [1, 256, 16, 16]          --
+│    └─GCNModel: 2-23                                        [256, 256]                --
+│    │    └─GCNConv: 3-49                                    [256, 512]                131,584
+│    │    └─GCNConv: 3-50                                    [256, 256]                131,328
+├─FeatureGCNProcessor: 1-10                                  [1, 256, 16, 16]          --
+│    └─GCNModel: 2-24                                        [256, 256]                --
+│    │    └─GCNConv: 3-51                                    [256, 512]                131,584
+│    │    └─GCNConv: 3-52                                    [256, 256]                131,328
+├─RegressionModel: 1-11                                      [1, 1024, 2]              1,180,160
+│    └─Conv2d: 2-25                                          [1, 256, 16, 16]          590,080
+│    └─ReLU: 2-26                                            [1, 256, 16, 16]          --
+│    └─Conv2d: 2-27                                          [1, 256, 16, 16]          590,080
+│    └─ReLU: 2-28                                            [1, 256, 16, 16]          --
+│    └─Conv2d: 2-29                                          [1, 8, 16, 16]            18,440
+├─ClassificationModel: 1-12                                  [1, 1024, 2]              1,180,160
+│    └─Conv2d: 2-30                                          [1, 256, 16, 16]          590,080
+│    └─ReLU: 2-31                                            [1, 256, 16, 16]          --
+│    └─Conv2d: 2-32                                          [1, 256, 16, 16]          590,080
+│    └─ReLU: 2-33                                            [1, 256, 16, 16]          --
+│    └─Conv2d: 2-34                                          [1, 8, 16, 16]            18,440
+├─AnchorPoints: 1-13                                         [1, 1024, 2]              --
+==============================================================================================================
+Total params: 539,298,598
+Trainable params: 22,747,894
+Non-trainable params: 516,550,704
+Total mult-adds (Units.GIGABYTES): 4.57
+==============================================================================================================
+Input size (MB): 4.90
+Forward/backward pass size (MB): 5590.85
+Params size (MB): 2129.84
+Estimated Total Size (MB): 7725.59
+==============================================================================================================
+```
+
+模型基本搞定了，接下来就是要修改一些输入的问题，因为网络要同时接受`x_dino, x_sam, x`三个输入，因此数据加载部分可能需要修改。
+
 ## 跑代码
 
 ## 写论文
 
 ## 参考论文
 
-1. Xu, Yimin, Fan Yang和Bin Xu. 《DSU-Net:An Improved U-Net Model Based on DINOv2 and SAM2 with Multi-Scale Cross-Model Feature Enhancement》. arXiv:2503.21187. 预印本, arXiv, 2025年3月31日. https://doi.org/10.48550/arXiv.2503.21187.
-2. Wu, Yihong, Jinqiao Wei, Xionghui Zhao, 等. 《DSGC-Net: A Dual-Stream Graph Convolutional Network for Crowd Counting via Feature Correlation Mining》. arXiv:2509.02261. 预印本, arXiv, 2025年9月2日. https://doi.org/10.48550/arXiv.2509.02261.
+1. Xu, Yimin, Fan Yang和Bin Xu. 《DSU-Net:An Improved U-Net Model Based on DINOv2 and SAM2 with Multi-Scale Cross-Model Feature Enhancement》. arXiv:2503.21187. 预印本, arXiv, 2025年3月31日. <https://doi.org/10.48550/arXiv.2503.21187>.
+2. Wu, Yihong, Jinqiao Wei, Xionghui Zhao, 等. 《DSGC-Net: A Dual-Stream Graph Convolutional Network for Crowd Counting via Feature Correlation Mining》. arXiv:2509.02261. 预印本, arXiv, 2025年9月2日. <https://doi.org/10.48550/arXiv.2509.02261>.
 

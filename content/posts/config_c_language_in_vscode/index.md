@@ -10,6 +10,7 @@ tags = ['C/C++']
 首先配置C/C++的插件，然后执行`Ctrl+Shift+B`执行生成任务，注意此时焦点一定要将待执行的文件上，否则会报错。
 
 修改生成的`task.json`
+
 ```json
 {
   "tasks": [
@@ -38,7 +39,9 @@ tags = ['C/C++']
   "version": "2.0.0"
 }
 ```
+
 修改两处：
+
 - "args':`"${filenamedir}/${fileBasenameNoExtension}"`修改为`"${workspaceFolder}/bulid/${fileBasenameNoExtension}"`，让生成的可执行文件存放在固定文件夹下，方便整理
 - "cwd": `"${filenamedir}`修改为`${workspaceFolder}`，将命令行目录改为工作区目录
 

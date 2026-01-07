@@ -388,7 +388,11 @@
             <li><a href="#dsu-net">DSU-Net</a></li>
           </ul>
         </li>
-        <li><a href="#开始修改">开始修改</a></li>
+        <li><a href="#开始修改">开始修改</a>
+          <ul>
+            <li><a href="#新模型">新模型</a></li>
+          </ul>
+        </li>
       </ul>
     </li>
     <li><a href="#跑代码">跑代码</a></li>
@@ -522,7 +526,7 @@
 
 
                 <time class="article-time--reading">
-                    阅读时长: 27 分钟
+                    阅读时长: 33 分钟
                 </time>
             </div>
         
@@ -556,10 +560,18 @@
 </ol>
 <p>$$(B \times 4, 3, 128, 128)$$</p>
 <ul>
-<li>B (Batch Size): 由 train.py 中的 &ndash;batch_size 参数控制（默认 8）。</li>
-<li>4 (Num Patches): 数据加载通过 random_crop 将每张原始图像裁剪为 4 个 patches。collate_fn_crowd_train 会将这 4 个 patch 展平并入 Batch 维度。</li>
-<li>3 (Channels): RGB 通道。</li>
-<li>128×128 (Resolution): 训练时使用固定大小的随机裁剪（在 SHHA.py 中硬编码为 128）。</li>
+<li>
+<p>B (Batch Size): 由 train.py 中的 &ndash;batch_size 参数控制（默认 8）。</p>
+</li>
+<li>
+<p>4 (Num Patches): 数据加载通过 random_crop 将每张原始图像裁剪为 4 个 patches。collate_fn_crowd_train 会将这 4 个 patch 展平并入 Batch 维度。</p>
+</li>
+<li>
+<p>3 (Channels): RGB 通道。</p>
+</li>
+<li>
+<p>128×128 (Resolution): 训练时使用固定大小的随机裁剪（在 SHHA.py 中硬编码为 128）。</p>
+</li>
 </ul>
 <blockquote>
 <p>随机裁剪的目的：从一张大图中随机裁剪 4 个不同的区域，相当于增加了训练数据的多样性。这有助于模型学习局部特征，防止过拟合，并提高模型对不同密度分布区域的鲁棒性。</p>
@@ -581,9 +593,13 @@ Std: [0.229, 0.224, 0.225]</p>
 <p>辅助输入 (用于 Loss 计算)
 虽然网络前向传播 (model(samples)) 只接收图像张量，但在训练循环 (engine.py) 中，还需要以下数据来计算损失：</p>
 <ul>
-<li>Ground Truth Density Map (gt_dmap): 形状对应于输入图像，用于监督 Density Approximation 分支。</li>
-<li>Point Annotations (targets): 包含人员坐标点
-(point)，用于监督 Representation Approximation 分支和分类/回归损失。</li>
+<li>
+<p>Ground Truth Density Map (gt_dmap): 形状对应于输入图像，用于监督 Density Approximation 分支。</p>
+</li>
+<li>
+<p>Point Annotations (targets): 包含人员坐标点
+(point)，用于监督 Representation Approximation 分支和分类/回归损失。</p>
+</li>
 </ul>
 <h3 id="net-info">Net info
 </h3><h4 id="dsgc-net">DSGC-Net
@@ -1791,10 +1807,18 @@ Std: [0.229, 0.224, 0.225]</p>
 代码显示 <code>RFB_modified</code> 包含四个并行的分支 (<code>branch0</code> ~ <code>branch3</code>)，它们使用了不同的膨胀卷积（Dilated Convolution）率：</li>
 </ol>
 <ul>
-<li><strong>Branch 0</strong>: 1x1 卷积（基础特征）。</li>
-<li><strong>Branch 1</strong>: 膨胀率 <code>dilation=3</code>。</li>
-<li><strong>Branch 2</strong>: 膨胀率 <code>dilation=5</code>。</li>
-<li><strong>Branch 3</strong>: 膨胀率 <code>dilation=7</code>。</li>
+<li>
+<p><strong>Branch 0</strong>: 1x1 卷积（基础特征）。</p>
+</li>
+<li>
+<p><strong>Branch 1</strong>: 膨胀率 <code>dilation=3</code>。</p>
+</li>
+<li>
+<p><strong>Branch 2</strong>: 膨胀率 <code>dilation=5</code>。</p>
+</li>
+<li>
+<p><strong>Branch 3</strong>: 膨胀率 <code>dilation=7</code>。</p>
+</li>
 </ul>
 <p>通过将这些不同“视野”范围提取到的特征拼接在一起，网络既能看到局部细节（小感受野），也能感知更大的上下文环境（大感受野），这对于分割不同大小的目标至关重要。</p>
 <ol start="2">
@@ -1821,8 +1845,12 @@ Std: [0.229, 0.224, 0.225]</p>
 <p>总结
 简单来说，RFB 在这里起到了 <strong>“承上启下”</strong> 的作用：</p>
 <ul>
-<li><strong>承上</strong>：接收骨干网络的特征，利用多分支空洞卷积使其包含更丰富的尺度信息。</li>
-<li><strong>启下</strong>：把特征压缩成统一的厚度（Channel=64），喂给解码器生成最终的分割图。</li>
+<li>
+<p><strong>承上</strong>：接收骨干网络的特征，利用多分支空洞卷积使其包含更丰富的尺度信息。</p>
+</li>
+<li>
+<p><strong>启下</strong>：把特征压缩成统一的厚度（Channel=64），喂给解码器生成最终的分割图。</p>
+</li>
 </ul>
 </blockquote>
 <p>通过这个模块不就可以让<code>channels=1152</code>变成<code>channels=256</code>吗？</p>
@@ -2296,11 +2324,17 @@ Std: [0.229, 0.224, 0.225]</p>
 <li>修改 <code>random_crop</code> 函数中的尺寸 (128 -&gt; 224)</li>
 </ol>
 <ul>
-<li><strong>原因</strong>：为了喂给 Transformer (ViT) 骨干网络。</li>
-<li><strong>解释</strong>：DSU-Net 用的 Dinov2 和 SAM2 是基于 Vision Transformer 的。它们把图片切成一个个 $14 \times 14$ 的小方块（Patch）。
+<li>
+<p><strong>原因</strong>：为了喂给 Transformer (ViT) 骨干网络。</p>
+</li>
+<li>
+<p><strong>解释</strong>：DSU-Net 用的 Dinov2 和 SAM2 是基于 Vision Transformer 的。它们把图片切成一个个 $14 \times 14$ 的小方块（Patch）。</p>
 <ul>
-<li>如果你用原来的 <strong>128</strong>：$128 \div 14 \approx 9.14$。切不整齐，边缘必须补零（Padding），这会引入无意义的黑边，干扰特征提取。</li>
+<li>如果你用原来的 <strong>128</strong>：$128 \div 14 \approx 9.14$。切不整齐，边缘必须补零（Padding），这会引入无意义的黑边，干扰特征提取。
+<ul>
 <li>改为 <strong>224</strong>：$224 \div 14 = 16$。刚好切成 $16 \times 16$ 个 Patch，完美适配。这也是 ImageNet 预训练的标准尺寸。</li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>
@@ -2308,11 +2342,17 @@ Std: [0.229, 0.224, 0.225]</p>
 <li>修改 Scale 缩放逻辑 (<code>&gt; CROP_SIZE</code>)</li>
 </ol>
 <ul>
-<li><strong>原因</strong>：防止程序崩溃（Index Error）。</li>
-<li><strong>解释</strong>：<code>random_crop</code> 是从大图里随机抠一个小图。
+<li>
+<p><strong>原因</strong>：防止程序崩溃（Index Error）。</p>
+</li>
+<li>
+<p><strong>解释</strong>：<code>random_crop</code> 是从大图里随机抠一个小图。</p>
 <ul>
-<li>如果你把图缩放到只剩 150 像素宽，然后让程序去抠一个 224 像素的块，程序就会报错（因为图不够大，抠不出来）。</li>
+<li>如果你把图缩放到只剩 150 像素宽，然后让程序去抠一个 224 像素的块，程序就会报错（因为图不够大，抠不出来）。
+<ul>
 <li>因此，必须保证缩放后的图<strong>至少</strong>比我们要抠的尺寸（224）大。</li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>
@@ -2320,12 +2360,18 @@ Std: [0.229, 0.224, 0.225]</p>
 <li>修改 Flip 翻转坐标 (<code>CROP_SIZE - x</code>)</li>
 </ol>
 <ul>
-<li><strong>原因</strong>：保证坐标变换的几何正确性。</li>
-<li><strong>解释</strong>：这就像照镜子。
+<li>
+<p><strong>原因</strong>：保证坐标变换的几何正确性。</p>
+</li>
+<li>
+<p><strong>解释</strong>：这就像照镜子。</p>
 <ul>
-<li>如果你在一张宽 128 的纸上画个点，坐标是 $x=10$。水平翻转后，新坐标是 $128 - 10 = 118$。</li>
+<li>如果你在一张宽 128 的纸上画个点，坐标是 $x=10$。水平翻转后，新坐标是 $128 - 10 = 118$。
+<ul>
 <li>现在纸变宽了（224），同样的翻转，新坐标应该是 $224 - 10 = 214$。</li>
 <li>如果你还用旧公式 $128 - 10 = 118$，这个点就跑到图片中间左边去了，而图片内容其实已经翻转到了最右边。<strong>点和人就对不上了</strong>，模型会学废。</li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>
@@ -2333,15 +2379,23 @@ Std: [0.229, 0.224, 0.225]</p>
 <li>修改 GT Density Map 生成逻辑 (Sum Pooling Stride)</li>
 </ol>
 <ul>
-<li><strong>这是最关键的修改！</strong></li>
-<li><strong>原因</strong>：保证 Ground Truth (标签) 和 模型预测输出 (Prediction) 的<strong>总能量守恒</strong>。</li>
-<li><strong>解释</strong>：
+<li>
+<p><strong>这是最关键的修改！</strong></p>
+</li>
+<li>
+<p><strong>原因</strong>：保证 Ground Truth (标签) 和 模型预测输出 (Prediction) 的<strong>总能量守恒</strong>。</p>
+</li>
+<li>
+<p><strong>解释</strong>：</p>
 <ul>
-<li>你的模型输出是固定的 $16 \times 16$ 网格。</li>
+<li>你的模型输出是固定的 $16 \times 16$ 网格。
+<ul>
 <li><strong>旧逻辑</strong>：输入 $128 \times 128$。要把 128 压缩成 16，每个网格就要“管” $128/16 = \mathbf{8}$ 个像素宽的区域。所以我们对 GT 进行 $8 \times 8$ 的求和池化。</li>
 <li><strong>新逻辑</strong>：输入 $224 \times 224$。要把 224 压缩成 16，每个网格就要“管” $224/16 = \mathbf{14}$ 个像素宽的区域。</li>
 <li>如果你输入 224 的图，却还按 8倍下采样生成 GT，你的 GT 尺寸会变成 $224/8 = 28 \times 28$。</li>
 <li><strong>后果</strong>：模型输出 $16 \times 16$，标签却是 $28 \times 28$。Loss 函数（如 MSE Loss）一计算就会直接报错：<code>RuntimeError: The size of tensor a (16) must match the size of tensor b (28)</code>。</li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>
@@ -2394,7 +2448,586 @@ Std: [0.229, 0.224, 0.225]</p>
 </span></span><span class="line"><span class="cl">        <span class="k">return</span> <span class="n">x</span>
 </span></span></code></pre></td></tr></table>
 </div>
-</div><h2 id="跑代码">跑代码
+</div><p>在改代码，SAM2环境出了点问题，之前也碰到过，这里记录一下。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-toml" data-lang="toml"><span class="line"><span class="cl"><span class="s2">&#34;iopath&gt;=0.1.10&#34;</span><span class="p">,</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>为了将<code>sam2dinov2</code>的相关模块导入<code>DSGC-Net</code>除了复制相关文件外，还要修改<code>pyproject.toml</code>以更新环境，重要的是添加新的模块。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-toml" data-lang="toml"><span class="line"><span class="cl"><span class="p">[</span><span class="nx">project</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl"><span class="nx">name</span> <span class="p">=</span> <span class="s2">&#34;crowdcounting-dsgcnet-main&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="nx">version</span> <span class="p">=</span> <span class="s2">&#34;0.1.0&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="nx">description</span> <span class="p">=</span> <span class="s2">&#34;Add your description here&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="nx">readme</span> <span class="p">=</span> <span class="s2">&#34;README.md&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="nx">requires-python</span> <span class="p">=</span> <span class="s2">&#34;&gt;=3.11&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="nx">dependencies</span> <span class="p">=</span> <span class="p">[</span>
+</span></span><span class="line"><span class="cl">    <span class="s2">&#34;einops&gt;=0.8.1&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="s2">&#34;hydra-core&gt;=1.3.2&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="s2">&#34;iopath&gt;=0.1.10&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="s2">&#34;loguru&gt;=0.7.3&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="s2">&#34;matplotlib&gt;=3.9.4&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="s2">&#34;numpy&gt;=2.0.2&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="s2">&#34;omegaconf&gt;=2.3.0&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="s2">&#34;opencv-python&gt;=4.11.0.86&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="s2">&#34;pandas&gt;=2.3.3&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="s2">&#34;pytorch-wavelets&gt;=1.3.0&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="s2">&#34;pywavelets&gt;=1.6.0&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="s2">&#34;scipy&gt;=1.13.1&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="s2">&#34;tensorboard&gt;=2.20.0&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="s2">&#34;tensorboardx&gt;=2.6.4&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="s2">&#34;timm&gt;=1.0.22&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="s2">&#34;torch&gt;=2.8.0&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="s2">&#34;torch-geometric&gt;=2.6.1&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="s2">&#34;torchinfo&gt;=1.8.0&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="s2">&#34;torchsummary&gt;=1.5.1&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="s2">&#34;torchvision&gt;=0.23.0&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="s2">&#34;tqdm&gt;=4.67.1&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl"><span class="p">]</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="p">[[</span><span class="nx">tool</span><span class="p">.</span><span class="nx">uv</span><span class="p">.</span><span class="nx">index</span><span class="p">]]</span>
+</span></span><span class="line"><span class="cl"><span class="nx">url</span> <span class="p">=</span> <span class="s2">&#34;https://pypi.tuna.tsinghua.edu.cn/simple&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="nx">default</span> <span class="p">=</span> <span class="kc">true</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="p">[</span><span class="nx">tool</span><span class="p">.</span><span class="nx">setuptools</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl"><span class="nx">packages</span> <span class="p">=</span> <span class="p">[</span><span class="s2">&#34;util&#34;</span><span class="p">,</span> <span class="s2">&#34;models&#34;</span><span class="p">,</span> <span class="s2">&#34;crowd_datasets&#34;</span><span class="p">,</span> <span class="s2">&#34;sam2&#34;</span><span class="p">,</span> <span class="s2">&#34;sam2_configs&#34;</span><span class="p">,</span> <span class="s2">&#34;sam2dino_seg&#34;</span><span class="p">]</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h4 id="新模型">新模型
+</h4><p>修改后的网络情况</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">  1
+</span><span class="lnt">  2
+</span><span class="lnt">  3
+</span><span class="lnt">  4
+</span><span class="lnt">  5
+</span><span class="lnt">  6
+</span><span class="lnt">  7
+</span><span class="lnt">  8
+</span><span class="lnt">  9
+</span><span class="lnt"> 10
+</span><span class="lnt"> 11
+</span><span class="lnt"> 12
+</span><span class="lnt"> 13
+</span><span class="lnt"> 14
+</span><span class="lnt"> 15
+</span><span class="lnt"> 16
+</span><span class="lnt"> 17
+</span><span class="lnt"> 18
+</span><span class="lnt"> 19
+</span><span class="lnt"> 20
+</span><span class="lnt"> 21
+</span><span class="lnt"> 22
+</span><span class="lnt"> 23
+</span><span class="lnt"> 24
+</span><span class="lnt"> 25
+</span><span class="lnt"> 26
+</span><span class="lnt"> 27
+</span><span class="lnt"> 28
+</span><span class="lnt"> 29
+</span><span class="lnt"> 30
+</span><span class="lnt"> 31
+</span><span class="lnt"> 32
+</span><span class="lnt"> 33
+</span><span class="lnt"> 34
+</span><span class="lnt"> 35
+</span><span class="lnt"> 36
+</span><span class="lnt"> 37
+</span><span class="lnt"> 38
+</span><span class="lnt"> 39
+</span><span class="lnt"> 40
+</span><span class="lnt"> 41
+</span><span class="lnt"> 42
+</span><span class="lnt"> 43
+</span><span class="lnt"> 44
+</span><span class="lnt"> 45
+</span><span class="lnt"> 46
+</span><span class="lnt"> 47
+</span><span class="lnt"> 48
+</span><span class="lnt"> 49
+</span><span class="lnt"> 50
+</span><span class="lnt"> 51
+</span><span class="lnt"> 52
+</span><span class="lnt"> 53
+</span><span class="lnt"> 54
+</span><span class="lnt"> 55
+</span><span class="lnt"> 56
+</span><span class="lnt"> 57
+</span><span class="lnt"> 58
+</span><span class="lnt"> 59
+</span><span class="lnt"> 60
+</span><span class="lnt"> 61
+</span><span class="lnt"> 62
+</span><span class="lnt"> 63
+</span><span class="lnt"> 64
+</span><span class="lnt"> 65
+</span><span class="lnt"> 66
+</span><span class="lnt"> 67
+</span><span class="lnt"> 68
+</span><span class="lnt"> 69
+</span><span class="lnt"> 70
+</span><span class="lnt"> 71
+</span><span class="lnt"> 72
+</span><span class="lnt"> 73
+</span><span class="lnt"> 74
+</span><span class="lnt"> 75
+</span><span class="lnt"> 76
+</span><span class="lnt"> 77
+</span><span class="lnt"> 78
+</span><span class="lnt"> 79
+</span><span class="lnt"> 80
+</span><span class="lnt"> 81
+</span><span class="lnt"> 82
+</span><span class="lnt"> 83
+</span><span class="lnt"> 84
+</span><span class="lnt"> 85
+</span><span class="lnt"> 86
+</span><span class="lnt"> 87
+</span><span class="lnt"> 88
+</span><span class="lnt"> 89
+</span><span class="lnt"> 90
+</span><span class="lnt"> 91
+</span><span class="lnt"> 92
+</span><span class="lnt"> 93
+</span><span class="lnt"> 94
+</span><span class="lnt"> 95
+</span><span class="lnt"> 96
+</span><span class="lnt"> 97
+</span><span class="lnt"> 98
+</span><span class="lnt"> 99
+</span><span class="lnt">100
+</span><span class="lnt">101
+</span><span class="lnt">102
+</span><span class="lnt">103
+</span><span class="lnt">104
+</span><span class="lnt">105
+</span><span class="lnt">106
+</span><span class="lnt">107
+</span><span class="lnt">108
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="k">class</span> <span class="nc">DSGCnet</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+</span></span><span class="line"><span class="cl">        <span class="bp">self</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">        <span class="n">dino_model_name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">        <span class="n">dino_hub_dir</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">        <span class="n">sam_config_file</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">        <span class="n">sam_ckpt_path</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">        <span class="n">row</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">        <span class="n">line</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="p">):</span>
+</span></span><span class="line"><span class="cl">        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">        <span class="k">if</span> <span class="n">dino_model_name</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">            <span class="nb">print</span><span class="p">(</span><span class="s2">&#34;No model_name specified, using default&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">            <span class="n">dino_model_name</span> <span class="o">=</span> <span class="s2">&#34;dinov2_vitl14&#34;</span>
+</span></span><span class="line"><span class="cl">        <span class="k">if</span> <span class="n">dino_hub_dir</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">            <span class="nb">print</span><span class="p">(</span><span class="s2">&#34;No dino_hub_dir specified, using default&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">            <span class="n">dino_hub_dir</span> <span class="o">=</span> <span class="s2">&#34;facebookresearch/dinov2&#34;</span>
+</span></span><span class="line"><span class="cl">        <span class="k">if</span> <span class="n">sam_config_file</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">            <span class="nb">print</span><span class="p">(</span><span class="s2">&#34;No sam_config_file specified, using default&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">            <span class="c1"># Replace with your own SAM configuration file path</span>
+</span></span><span class="line"><span class="cl">            <span class="n">sam_config_file</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">&#34;../sam2_configs/sam2.1_hiera_l.yaml&#34;</span>
+</span></span><span class="line"><span class="cl">        <span class="k">if</span> <span class="n">sam_ckpt_path</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">            <span class="nb">print</span><span class="p">(</span><span class="s2">&#34;No sam_ckpt_path specified, using default&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">            <span class="c1"># Replace with your own SAM pt file path</span>
+</span></span><span class="line"><span class="cl">            <span class="n">sam_ckpt_path</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">&#34;checkpoints/sam2.1_hiera_large.pt&#34;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">        <span class="bp">self</span><span class="o">.</span><span class="n">backbone_dino</span> <span class="o">=</span> <span class="n">dinov2_extract</span><span class="o">.</span><span class="n">DinoV2FeatureExtractor</span><span class="p">(</span>
+</span></span><span class="line"><span class="cl">            <span class="n">model_name</span><span class="o">=</span><span class="n">dino_model_name</span><span class="p">,</span> <span class="n">hub_dir</span><span class="o">=</span><span class="n">dino_hub_dir</span>
+</span></span><span class="line"><span class="cl">        <span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="bp">self</span><span class="o">.</span><span class="n">backbone_sam</span> <span class="o">=</span> <span class="n">sam2hiera</span><span class="o">.</span><span class="n">sam2hiera</span><span class="p">(</span><span class="n">sam_config_file</span><span class="p">,</span> <span class="n">sam_ckpt_path</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="c1"># Feature Fusion</span>
+</span></span><span class="line"><span class="cl">        <span class="bp">self</span><span class="o">.</span><span class="n">fusion4</span> <span class="o">=</span> <span class="n">CGAFusion</span><span class="o">.</span><span class="n">CGAFusion</span><span class="p">(</span><span class="mi">1152</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="c1"># (1024,37,37)-&gt;(1024,11,11)</span>
+</span></span><span class="line"><span class="cl">        <span class="bp">self</span><span class="o">.</span><span class="n">dino2sam_down4</span> <span class="o">=</span> <span class="n">updown</span><span class="o">.</span><span class="n">interpolate_upsample</span><span class="p">(</span><span class="mi">11</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="c1"># (1024,11,11)-&gt;(1152,11,11)</span>
+</span></span><span class="line"><span class="cl">        <span class="bp">self</span><span class="o">.</span><span class="n">dino2sam_down14</span> <span class="o">=</span> <span class="n">wtconv</span><span class="o">.</span><span class="n">DepthwiseSeparableConvWithWTConv2d</span><span class="p">(</span>
+</span></span><span class="line"><span class="cl">            <span class="n">in_channels</span><span class="o">=</span><span class="mi">1024</span><span class="p">,</span> <span class="n">out_channels</span><span class="o">=</span><span class="mi">1152</span>
+</span></span><span class="line"><span class="cl">        <span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="bp">self</span><span class="o">.</span><span class="n">rfb4</span> <span class="o">=</span> <span class="n">RFB</span><span class="o">.</span><span class="n">RFB_modified</span><span class="p">(</span><span class="mi">1152</span><span class="p">,</span> <span class="mi">256</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="bp">self</span><span class="o">.</span><span class="n">upsample</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Upsample</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="mi">16</span><span class="p">,</span> <span class="mi">16</span><span class="p">),</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&#34;bilinear&#34;</span><span class="p">,</span> <span class="n">align_corners</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="bp">self</span><span class="o">.</span><span class="n">num_classes</span> <span class="o">=</span> <span class="mi">2</span>
+</span></span><span class="line"><span class="cl">        <span class="n">num_anchor_points</span> <span class="o">=</span> <span class="n">row</span> <span class="o">*</span> <span class="n">line</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">        <span class="bp">self</span><span class="o">.</span><span class="n">fusion_total</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Sequential</span><span class="p">(</span>
+</span></span><span class="line"><span class="cl">            <span class="n">nn</span><span class="o">.</span><span class="n">Conv2d</span><span class="p">(</span><span class="mi">3</span> <span class="o">*</span> <span class="mi">256</span><span class="p">,</span> <span class="mi">256</span><span class="p">,</span> <span class="n">kernel_size</span><span class="o">=</span><span class="mi">1</span><span class="p">),</span>
+</span></span><span class="line"><span class="cl">            <span class="n">nn</span><span class="o">.</span><span class="n">BatchNorm2d</span><span class="p">(</span><span class="mi">256</span><span class="p">),</span>
+</span></span><span class="line"><span class="cl">            <span class="n">nn</span><span class="o">.</span><span class="n">ReLU</span><span class="p">(</span><span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span>
+</span></span><span class="line"><span class="cl">        <span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="bp">self</span><span class="o">.</span><span class="n">regression</span> <span class="o">=</span> <span class="n">RegressionModel</span><span class="p">(</span>
+</span></span><span class="line"><span class="cl">            <span class="n">num_features_in</span><span class="o">=</span><span class="mi">256</span><span class="p">,</span> <span class="n">num_anchor_points</span><span class="o">=</span><span class="n">num_anchor_points</span>
+</span></span><span class="line"><span class="cl">        <span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="bp">self</span><span class="o">.</span><span class="n">classification</span> <span class="o">=</span> <span class="n">ClassificationModel</span><span class="p">(</span>
+</span></span><span class="line"><span class="cl">            <span class="n">num_features_in</span><span class="o">=</span><span class="mi">256</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">            <span class="n">num_classes</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">num_classes</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">            <span class="n">num_anchor_points</span><span class="o">=</span><span class="n">num_anchor_points</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">        <span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">        <span class="bp">self</span><span class="o">.</span><span class="n">anchor_points</span> <span class="o">=</span> <span class="n">AnchorPoints</span><span class="p">(</span>
+</span></span><span class="line"><span class="cl">            <span class="n">pyramid_levels</span><span class="o">=</span><span class="p">[</span>
+</span></span><span class="line"><span class="cl">                <span class="mi">3</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">            <span class="p">],</span>
+</span></span><span class="line"><span class="cl">            <span class="n">row</span><span class="o">=</span><span class="n">row</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">            <span class="n">line</span><span class="o">=</span><span class="n">line</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">        <span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">        <span class="bp">self</span><span class="o">.</span><span class="n">pa</span> <span class="o">=</span> <span class="n">Decoder_SPD_PAFPN</span><span class="p">(</span><span class="mi">256</span><span class="p">,</span> <span class="mi">512</span><span class="p">,</span> <span class="mi">512</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="bp">self</span><span class="o">.</span><span class="n">density_pred</span> <span class="o">=</span> <span class="n">Density_pred</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">        <span class="bp">self</span><span class="o">.</span><span class="n">density_gcn</span> <span class="o">=</span> <span class="n">DensityGCNProcessor</span><span class="p">(</span><span class="n">k</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="bp">self</span><span class="o">.</span><span class="n">feature_gcn</span> <span class="o">=</span> <span class="n">FeatureGCNProcessor</span><span class="p">(</span><span class="n">k</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="bp">self</span><span class="o">.</span><span class="n">alpha</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Parameter</span><span class="p">(</span>
+</span></span><span class="line"><span class="cl">            <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">float32</span><span class="p">,</span> <span class="n">requires_grad</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x_dino</span><span class="p">,</span> <span class="n">x_sam</span><span class="p">,</span> <span class="n">samples</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">        <span class="c1"># Backbone Feature Extractor</span>
+</span></span><span class="line"><span class="cl">        <span class="n">x1</span><span class="p">,</span> <span class="n">x2</span><span class="p">,</span> <span class="n">x3</span><span class="p">,</span> <span class="n">x4</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">backbone_sam</span><span class="p">(</span><span class="n">x_sam</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="n">features</span> <span class="o">=</span> <span class="p">[</span><span class="n">x1</span><span class="p">,</span> <span class="n">x2</span><span class="p">,</span> <span class="n">x3</span><span class="p">,</span> <span class="n">x4</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl">        <span class="n">x_dino</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">backbone_dino</span><span class="p">(</span><span class="n">x_dino</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="c1"># change dino feature map size and dimension</span>
+</span></span><span class="line"><span class="cl">        <span class="n">x_dino4</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dino2sam_down4</span><span class="p">(</span><span class="n">x_dino</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="n">x_dino4</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dino2sam_down14</span><span class="p">(</span><span class="n">x_dino4</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="c1"># Feature Fusion(sam &amp; dino)</span>
+</span></span><span class="line"><span class="cl">        <span class="n">x4</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fusion4</span><span class="p">(</span><span class="n">x4</span><span class="p">,</span> <span class="n">x_dino4</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="c1"># change fusion feature map dimension-&gt;(64,11/22/44/88,11/22/44/88)</span>
+</span></span><span class="line"><span class="cl">        <span class="n">x4</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rfb4</span><span class="p">(</span><span class="n">x4</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="n">x4</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">upsample</span><span class="p">(</span><span class="n">x4</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">        <span class="n">batch_size</span> <span class="o">=</span> <span class="n">features</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl">        <span class="n">density</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">density_pred</span><span class="p">(</span><span class="n">x4</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="n">density_gcn_feature</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">density_gcn</span><span class="p">(</span><span class="n">density</span><span class="p">,</span> <span class="n">x4</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="n">feature_gcn_feature</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">feature_gcn</span><span class="p">(</span><span class="n">x4</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="n">feature_fl</span> <span class="o">=</span> <span class="p">(</span>
+</span></span><span class="line"><span class="cl">            <span class="n">x4</span>
+</span></span><span class="line"><span class="cl">            <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">alpha</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">density_gcn_feature</span>
+</span></span><span class="line"><span class="cl">            <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">alpha</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="n">feature_gcn_feature</span>
+</span></span><span class="line"><span class="cl">        <span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="n">regression</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">regression</span><span class="p">(</span><span class="n">feature_fl</span><span class="p">)</span> <span class="o">*</span> <span class="mi">100</span>
+</span></span><span class="line"><span class="cl">        <span class="n">classification</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">classification</span><span class="p">(</span><span class="n">feature_fl</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="n">anchor_points</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">anchor_points</span><span class="p">(</span><span class="n">samples</span><span class="p">)</span><span class="o">.</span><span class="n">repeat</span><span class="p">(</span><span class="n">batch_size</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="n">output_coord</span> <span class="o">=</span> <span class="n">regression</span> <span class="o">+</span> <span class="n">anchor_points</span>
+</span></span><span class="line"><span class="cl">        <span class="n">output_class</span> <span class="o">=</span> <span class="n">classification</span>
+</span></span><span class="line"><span class="cl">        <span class="n">out</span> <span class="o">=</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">            <span class="s2">&#34;pred_logits&#34;</span><span class="p">:</span> <span class="n">output_class</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">            <span class="s2">&#34;pred_points&#34;</span><span class="p">:</span> <span class="n">output_coord</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">            <span class="s2">&#34;density_out&#34;</span><span class="p">:</span> <span class="n">density</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">        <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">        <span class="k">return</span> <span class="n">out</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>下面是数据在网络中的流动情况，执行一下代码即可：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">torch</span>
+</span></span><span class="line"><span class="cl"><span class="kn">from</span> <span class="nn">torchinfo</span> <span class="kn">import</span> <span class="n">summary</span>
+</span></span><span class="line"><span class="cl"><span class="kn">from</span> <span class="nn">models.DSGCnet_modify</span> <span class="kn">import</span> <span class="n">DSGCnet</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&#34;__main__&#34;</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">    <span class="k">with</span> <span class="n">torch</span><span class="o">.</span><span class="n">inference_mode</span><span class="p">():</span>
+</span></span><span class="line"><span class="cl">        <span class="n">device</span> <span class="o">=</span> <span class="s2">&#34;cuda&#34;</span> <span class="k">if</span> <span class="n">torch</span><span class="o">.</span><span class="n">cuda</span><span class="o">.</span><span class="n">is_available</span><span class="p">()</span> <span class="k">else</span> <span class="s2">&#34;cpu&#34;</span>
+</span></span><span class="line"><span class="cl">        <span class="n">x</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">128</span><span class="p">,</span> <span class="mi">128</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="n">x_dino</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">518</span><span class="p">,</span> <span class="mi">518</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="n">x_sam</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">352</span><span class="p">,</span> <span class="mi">352</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="n">dsgc_net</span> <span class="o">=</span> <span class="n">DSGCnet</span><span class="p">()</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="n">summary</span><span class="p">(</span><span class="n">dsgc_net</span><span class="p">,</span> <span class="n">input_data</span><span class="o">=</span><span class="p">(</span><span class="n">x_dino</span><span class="p">,</span> <span class="n">x_sam</span><span class="p">,</span> <span class="n">x</span><span class="p">))</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>output:</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">  1
+</span><span class="lnt">  2
+</span><span class="lnt">  3
+</span><span class="lnt">  4
+</span><span class="lnt">  5
+</span><span class="lnt">  6
+</span><span class="lnt">  7
+</span><span class="lnt">  8
+</span><span class="lnt">  9
+</span><span class="lnt"> 10
+</span><span class="lnt"> 11
+</span><span class="lnt"> 12
+</span><span class="lnt"> 13
+</span><span class="lnt"> 14
+</span><span class="lnt"> 15
+</span><span class="lnt"> 16
+</span><span class="lnt"> 17
+</span><span class="lnt"> 18
+</span><span class="lnt"> 19
+</span><span class="lnt"> 20
+</span><span class="lnt"> 21
+</span><span class="lnt"> 22
+</span><span class="lnt"> 23
+</span><span class="lnt"> 24
+</span><span class="lnt"> 25
+</span><span class="lnt"> 26
+</span><span class="lnt"> 27
+</span><span class="lnt"> 28
+</span><span class="lnt"> 29
+</span><span class="lnt"> 30
+</span><span class="lnt"> 31
+</span><span class="lnt"> 32
+</span><span class="lnt"> 33
+</span><span class="lnt"> 34
+</span><span class="lnt"> 35
+</span><span class="lnt"> 36
+</span><span class="lnt"> 37
+</span><span class="lnt"> 38
+</span><span class="lnt"> 39
+</span><span class="lnt"> 40
+</span><span class="lnt"> 41
+</span><span class="lnt"> 42
+</span><span class="lnt"> 43
+</span><span class="lnt"> 44
+</span><span class="lnt"> 45
+</span><span class="lnt"> 46
+</span><span class="lnt"> 47
+</span><span class="lnt"> 48
+</span><span class="lnt"> 49
+</span><span class="lnt"> 50
+</span><span class="lnt"> 51
+</span><span class="lnt"> 52
+</span><span class="lnt"> 53
+</span><span class="lnt"> 54
+</span><span class="lnt"> 55
+</span><span class="lnt"> 56
+</span><span class="lnt"> 57
+</span><span class="lnt"> 58
+</span><span class="lnt"> 59
+</span><span class="lnt"> 60
+</span><span class="lnt"> 61
+</span><span class="lnt"> 62
+</span><span class="lnt"> 63
+</span><span class="lnt"> 64
+</span><span class="lnt"> 65
+</span><span class="lnt"> 66
+</span><span class="lnt"> 67
+</span><span class="lnt"> 68
+</span><span class="lnt"> 69
+</span><span class="lnt"> 70
+</span><span class="lnt"> 71
+</span><span class="lnt"> 72
+</span><span class="lnt"> 73
+</span><span class="lnt"> 74
+</span><span class="lnt"> 75
+</span><span class="lnt"> 76
+</span><span class="lnt"> 77
+</span><span class="lnt"> 78
+</span><span class="lnt"> 79
+</span><span class="lnt"> 80
+</span><span class="lnt"> 81
+</span><span class="lnt"> 82
+</span><span class="lnt"> 83
+</span><span class="lnt"> 84
+</span><span class="lnt"> 85
+</span><span class="lnt"> 86
+</span><span class="lnt"> 87
+</span><span class="lnt"> 88
+</span><span class="lnt"> 89
+</span><span class="lnt"> 90
+</span><span class="lnt"> 91
+</span><span class="lnt"> 92
+</span><span class="lnt"> 93
+</span><span class="lnt"> 94
+</span><span class="lnt"> 95
+</span><span class="lnt"> 96
+</span><span class="lnt"> 97
+</span><span class="lnt"> 98
+</span><span class="lnt"> 99
+</span><span class="lnt">100
+</span><span class="lnt">101
+</span><span class="lnt">102
+</span><span class="lnt">103
+</span><span class="lnt">104
+</span><span class="lnt">105
+</span><span class="lnt">106
+</span><span class="lnt">107
+</span><span class="lnt">108
+</span><span class="lnt">109
+</span><span class="lnt">110
+</span><span class="lnt">111
+</span><span class="lnt">112
+</span><span class="lnt">113
+</span><span class="lnt">114
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-text" data-lang="text"><span class="line"><span class="cl">==============================================================================================================
+</span></span><span class="line"><span class="cl">Layer (type:depth-idx)                                       Output Shape              Param #
+</span></span><span class="line"><span class="cl">==============================================================================================================
+</span></span><span class="line"><span class="cl">DSGCnet                                                      [1, 1, 16, 16]            3,022,338
+</span></span><span class="line"><span class="cl">├─sam2hiera: 1-1                                             [1, 144, 88, 88]          --
+</span></span><span class="line"><span class="cl">│    └─Hiera: 2-1                                            [1, 144, 88, 88]          16,272
+</span></span><span class="line"><span class="cl">│    │    └─PatchEmbed: 3-1                                  [1, 88, 88, 144]          (21,312)
+</span></span><span class="line"><span class="cl">│    │    └─Sequential: 3-2                                  --                        213,826,128
+</span></span><span class="line"><span class="cl">├─DinoV2FeatureExtractor: 1-2                                [1, 1024, 37, 37]         --
+</span></span><span class="line"><span class="cl">│    └─DinoVisionTransformer: 2-2                            --                        1,404,928
+</span></span><span class="line"><span class="cl">│    │    └─PatchEmbed: 3-3                                  [1, 1369, 1024]           (603,136)
+</span></span><span class="line"><span class="cl">│    │    └─ModuleList: 3-4                                  --                        (302,358,528)
+</span></span><span class="line"><span class="cl">│    │    └─LayerNorm: 3-5                                   [1, 1370, 1024]           (2,048)
+</span></span><span class="line"><span class="cl">├─interpolate_upsample: 1-3                                  [1, 1024, 11, 11]         --
+</span></span><span class="line"><span class="cl">├─DepthwiseSeparableConvWithWTConv2d: 1-4                    [1, 1152, 11, 11]         --
+</span></span><span class="line"><span class="cl">│    └─WTConv2d: 2-3                                         [1, 1024, 11, 11]         32,768
+</span></span><span class="line"><span class="cl">│    │    └─ModuleList: 3-6                                  --                        36,864
+</span></span><span class="line"><span class="cl">│    │    └─ModuleList: 3-7                                  --                        4,096
+</span></span><span class="line"><span class="cl">│    │    └─Conv2d: 3-8                                      [1, 1024, 11, 11]         10,240
+</span></span><span class="line"><span class="cl">│    │    └─_ScaleModule: 3-9                                [1, 1024, 11, 11]         1,024
+</span></span><span class="line"><span class="cl">│    └─Conv2d: 2-4                                           [1, 1152, 11, 11]         1,179,648
+</span></span><span class="line"><span class="cl">│    └─BatchNorm2d: 2-5                                      [1, 1152, 11, 11]         2,304
+</span></span><span class="line"><span class="cl">│    └─ReLU: 2-6                                             [1, 1152, 11, 11]         --
+</span></span><span class="line"><span class="cl">├─CGAFusion: 1-5                                             [1, 1152, 11, 11]         --
+</span></span><span class="line"><span class="cl">│    └─ChannelAttention: 2-7                                 [1, 1152, 1, 1]           --
+</span></span><span class="line"><span class="cl">│    │    └─AdaptiveAvgPool2d: 3-10                          [1, 1152, 1, 1]           --
+</span></span><span class="line"><span class="cl">│    │    └─Sequential: 3-11                                 [1, 1152, 1, 1]           333,072
+</span></span><span class="line"><span class="cl">│    └─SpatialAttention: 2-8                                 [1, 1, 11, 11]            --
+</span></span><span class="line"><span class="cl">│    │    └─Conv2d: 3-12                                     [1, 1, 11, 11]            99
+</span></span><span class="line"><span class="cl">│    └─PixelAttention: 2-9                                   [1, 1152, 11, 11]         --
+</span></span><span class="line"><span class="cl">│    │    └─Conv2d: 3-13                                     [1, 1152, 11, 11]         114,048
+</span></span><span class="line"><span class="cl">│    │    └─Sigmoid: 3-14                                    [1, 1152, 11, 11]         --
+</span></span><span class="line"><span class="cl">│    └─Sigmoid: 2-10                                         [1, 1152, 11, 11]         --
+</span></span><span class="line"><span class="cl">│    └─Conv2d: 2-11                                          [1, 1152, 11, 11]         1,328,256
+</span></span><span class="line"><span class="cl">├─RFB_modified: 1-6                                          [1, 256, 11, 11]          --
+</span></span><span class="line"><span class="cl">│    └─Sequential: 2-12                                      [1, 256, 11, 11]          --
+</span></span><span class="line"><span class="cl">│    │    └─BasicConv2d: 3-15                                [1, 256, 11, 11]          295,424
+</span></span><span class="line"><span class="cl">│    └─Sequential: 2-13                                      [1, 256, 11, 11]          --
+</span></span><span class="line"><span class="cl">│    │    └─BasicConv2d: 3-16                                [1, 256, 11, 11]          295,424
+</span></span><span class="line"><span class="cl">│    │    └─BasicConv2d: 3-17                                [1, 256, 11, 11]          197,120
+</span></span><span class="line"><span class="cl">│    │    └─BasicConv2d: 3-18                                [1, 256, 11, 11]          197,120
+</span></span><span class="line"><span class="cl">│    │    └─BasicConv2d: 3-19                                [1, 256, 11, 11]          590,336
+</span></span><span class="line"><span class="cl">│    └─Sequential: 2-14                                      [1, 256, 11, 11]          --
+</span></span><span class="line"><span class="cl">│    │    └─BasicConv2d: 3-20                                [1, 256, 11, 11]          295,424
+</span></span><span class="line"><span class="cl">│    │    └─BasicConv2d: 3-21                                [1, 256, 11, 11]          328,192
+</span></span><span class="line"><span class="cl">│    │    └─BasicConv2d: 3-22                                [1, 256, 11, 11]          328,192
+</span></span><span class="line"><span class="cl">│    │    └─BasicConv2d: 3-23                                [1, 256, 11, 11]          590,336
+</span></span><span class="line"><span class="cl">│    └─Sequential: 2-15                                      [1, 256, 11, 11]          --
+</span></span><span class="line"><span class="cl">│    │    └─BasicConv2d: 3-24                                [1, 256, 11, 11]          295,424
+</span></span><span class="line"><span class="cl">│    │    └─BasicConv2d: 3-25                                [1, 256, 11, 11]          459,264
+</span></span><span class="line"><span class="cl">│    │    └─BasicConv2d: 3-26                                [1, 256, 11, 11]          459,264
+</span></span><span class="line"><span class="cl">│    │    └─BasicConv2d: 3-27                                [1, 256, 11, 11]          590,336
+</span></span><span class="line"><span class="cl">│    └─BasicConv2d: 2-16                                     [1, 256, 11, 11]          --
+</span></span><span class="line"><span class="cl">│    │    └─Conv2d: 3-28                                     [1, 256, 11, 11]          2,359,296
+</span></span><span class="line"><span class="cl">│    │    └─BatchNorm2d: 3-29                                [1, 256, 11, 11]          512
+</span></span><span class="line"><span class="cl">│    └─BasicConv2d: 2-17                                     [1, 256, 11, 11]          --
+</span></span><span class="line"><span class="cl">│    │    └─Conv2d: 3-30                                     [1, 256, 11, 11]          294,912
+</span></span><span class="line"><span class="cl">│    │    └─BatchNorm2d: 3-31                                [1, 256, 11, 11]          512
+</span></span><span class="line"><span class="cl">│    └─ReLU: 2-18                                            [1, 256, 11, 11]          --
+</span></span><span class="line"><span class="cl">├─Upsample: 1-7                                              [1, 256, 16, 16]          --
+</span></span><span class="line"><span class="cl">├─Density_pred: 1-8                                          [1, 1, 16, 16]            --
+</span></span><span class="line"><span class="cl">│    └─Sequential: 2-19                                      [1, 256, 16, 16]          --
+</span></span><span class="line"><span class="cl">│    │    └─Conv2d: 3-32                                     [1, 256, 16, 16]          590,080
+</span></span><span class="line"><span class="cl">│    │    └─BatchNorm2d: 3-33                                [1, 256, 16, 16]          512
+</span></span><span class="line"><span class="cl">│    │    └─ReLU: 3-34                                       [1, 256, 16, 16]          --
+</span></span><span class="line"><span class="cl">│    └─Sequential: 2-20                                      [1, 256, 16, 16]          --
+</span></span><span class="line"><span class="cl">│    │    └─Conv2d: 3-35                                     [1, 256, 16, 16]          590,080
+</span></span><span class="line"><span class="cl">│    │    └─BatchNorm2d: 3-36                                [1, 256, 16, 16]          512
+</span></span><span class="line"><span class="cl">│    │    └─ReLU: 3-37                                       [1, 256, 16, 16]          --
+</span></span><span class="line"><span class="cl">│    └─Sequential: 2-21                                      [1, 256, 16, 16]          --
+</span></span><span class="line"><span class="cl">│    │    └─Conv2d: 3-38                                     [1, 256, 16, 16]          590,080
+</span></span><span class="line"><span class="cl">│    │    └─BatchNorm2d: 3-39                                [1, 256, 16, 16]          512
+</span></span><span class="line"><span class="cl">│    │    └─ReLU: 3-40                                       [1, 256, 16, 16]          --
+</span></span><span class="line"><span class="cl">│    └─Sequential: 2-22                                      [1, 1, 16, 16]            --
+</span></span><span class="line"><span class="cl">│    │    └─Conv2d: 3-41                                     [1, 128, 16, 16]          295,040
+</span></span><span class="line"><span class="cl">│    │    └─BatchNorm2d: 3-42                                [1, 128, 16, 16]          256
+</span></span><span class="line"><span class="cl">│    │    └─ReLU: 3-43                                       [1, 128, 16, 16]          --
+</span></span><span class="line"><span class="cl">│    │    └─Conv2d: 3-44                                     [1, 64, 16, 16]           73,792
+</span></span><span class="line"><span class="cl">│    │    └─BatchNorm2d: 3-45                                [1, 64, 16, 16]           128
+</span></span><span class="line"><span class="cl">│    │    └─ReLU: 3-46                                       [1, 64, 16, 16]           --
+</span></span><span class="line"><span class="cl">│    │    └─Conv2d: 3-47                                     [1, 1, 16, 16]            65
+</span></span><span class="line"><span class="cl">│    │    └─ReLU: 3-48                                       [1, 1, 16, 16]            --
+</span></span><span class="line"><span class="cl">├─DensityGCNProcessor: 1-9                                   [1, 256, 16, 16]          --
+</span></span><span class="line"><span class="cl">│    └─GCNModel: 2-23                                        [256, 256]                --
+</span></span><span class="line"><span class="cl">│    │    └─GCNConv: 3-49                                    [256, 512]                131,584
+</span></span><span class="line"><span class="cl">│    │    └─GCNConv: 3-50                                    [256, 256]                131,328
+</span></span><span class="line"><span class="cl">├─FeatureGCNProcessor: 1-10                                  [1, 256, 16, 16]          --
+</span></span><span class="line"><span class="cl">│    └─GCNModel: 2-24                                        [256, 256]                --
+</span></span><span class="line"><span class="cl">│    │    └─GCNConv: 3-51                                    [256, 512]                131,584
+</span></span><span class="line"><span class="cl">│    │    └─GCNConv: 3-52                                    [256, 256]                131,328
+</span></span><span class="line"><span class="cl">├─RegressionModel: 1-11                                      [1, 1024, 2]              1,180,160
+</span></span><span class="line"><span class="cl">│    └─Conv2d: 2-25                                          [1, 256, 16, 16]          590,080
+</span></span><span class="line"><span class="cl">│    └─ReLU: 2-26                                            [1, 256, 16, 16]          --
+</span></span><span class="line"><span class="cl">│    └─Conv2d: 2-27                                          [1, 256, 16, 16]          590,080
+</span></span><span class="line"><span class="cl">│    └─ReLU: 2-28                                            [1, 256, 16, 16]          --
+</span></span><span class="line"><span class="cl">│    └─Conv2d: 2-29                                          [1, 8, 16, 16]            18,440
+</span></span><span class="line"><span class="cl">├─ClassificationModel: 1-12                                  [1, 1024, 2]              1,180,160
+</span></span><span class="line"><span class="cl">│    └─Conv2d: 2-30                                          [1, 256, 16, 16]          590,080
+</span></span><span class="line"><span class="cl">│    └─ReLU: 2-31                                            [1, 256, 16, 16]          --
+</span></span><span class="line"><span class="cl">│    └─Conv2d: 2-32                                          [1, 256, 16, 16]          590,080
+</span></span><span class="line"><span class="cl">│    └─ReLU: 2-33                                            [1, 256, 16, 16]          --
+</span></span><span class="line"><span class="cl">│    └─Conv2d: 2-34                                          [1, 8, 16, 16]            18,440
+</span></span><span class="line"><span class="cl">├─AnchorPoints: 1-13                                         [1, 1024, 2]              --
+</span></span><span class="line"><span class="cl">==============================================================================================================
+</span></span><span class="line"><span class="cl">Total params: 539,298,598
+</span></span><span class="line"><span class="cl">Trainable params: 22,747,894
+</span></span><span class="line"><span class="cl">Non-trainable params: 516,550,704
+</span></span><span class="line"><span class="cl">Total mult-adds (Units.GIGABYTES): 4.57
+</span></span><span class="line"><span class="cl">==============================================================================================================
+</span></span><span class="line"><span class="cl">Input size (MB): 4.90
+</span></span><span class="line"><span class="cl">Forward/backward pass size (MB): 5590.85
+</span></span><span class="line"><span class="cl">Params size (MB): 2129.84
+</span></span><span class="line"><span class="cl">Estimated Total Size (MB): 7725.59
+</span></span><span class="line"><span class="cl">==============================================================================================================
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>模型基本搞定了，接下来就是要修改一些输入的问题，因为网络要同时接受<code>x_dino, x_sam, x</code>三个输入，因此数据加载部分可能需要修改。</p>
+<h2 id="跑代码">跑代码
 </h2><h2 id="写论文">写论文
 </h2><h2 id="参考论文">参考论文
 </h2><ol>
