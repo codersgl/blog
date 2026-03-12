@@ -1,0 +1,861 @@
+<!DOCTYPE html>
+<html lang="zh-Hans" dir="ltr">
+    <head><script src="/blog/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=blog/livereload" data-no-instant defer></script><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content="Rust是一门怎样的编程语言? Rust是一门系统编程语言，像C一样接近系统底层，同时也是一门编译型语言，速度能和C媲美。而Rust最大的特点是其严格的内存管理方式，它不像其他高级语言一样拥有GC机制来管理内存，也不想C/C++一样容易因为手动管理内存而导致内存泄露和double free的问题。\n">
+<title>codersgl&#39;s blog</title>
+
+<link rel='canonical' href='http://localhost:1313/blog/posts/geting_to_know_rust/'>
+
+<link rel="stylesheet" href="/blog/scss/style.min.833d6eed45de56f48306bf57268d5b8cdfc8a60e8e7bdc99810464fcd033f7c6.css"><meta property='og:title' content="codersgl's blog">
+<meta property='og:description' content="Rust是一门怎样的编程语言? Rust是一门系统编程语言，像C一样接近系统底层，同时也是一门编译型语言，速度能和C媲美。而Rust最大的特点是其严格的内存管理方式，它不像其他高级语言一样拥有GC机制来管理内存，也不想C/C++一样容易因为手动管理内存而导致内存泄露和double free的问题。\n">
+<meta property='og:url' content='http://localhost:1313/blog/posts/geting_to_know_rust/'>
+<meta property='og:site_name' content='codersgl&#39;s blog'>
+<meta property='og:type' content='article'><meta property='article:section' content='Posts' /><meta property='article:tag' content='Rust' /><meta property='article:published_time' content='2026-01-21T23:13:14&#43;08:00'/><meta property='article:modified_time' content='2026-01-21T23:13:14&#43;08:00'/><meta property='og:image' content='http://localhost:1313/blog/posts/geting_to_know_rust/cover.png' />
+<meta name="twitter:title" content="codersgl's blog">
+<meta name="twitter:description" content="Rust是一门怎样的编程语言? Rust是一门系统编程语言，像C一样接近系统底层，同时也是一门编译型语言，速度能和C媲美。而Rust最大的特点是其严格的内存管理方式，它不像其他高级语言一样拥有GC机制来管理内存，也不想C/C++一样容易因为手动管理内存而导致内存泄露和double free的问题。\n"><meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:image" content='http://localhost:1313/blog/posts/geting_to_know_rust/cover.png' />
+    <link rel="shortcut icon" href="/blog/favicon.ico" />
+<link rel="stylesheet" href="/blog/fonts/LXGW/lxgw.css" />
+<style>
+    @font-face {
+        font-family: 'MapleMonoNF';
+        src: url(/blog/fonts/MapleMono-NF-Regular.ttf);
+    }
+
+    :root {
+        --sys-font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Droid Sans', 'Helvetica Neue';
+        --zh-font-family: 'LXGW WenKai', 'PingFang SC', 'Hiragino Sans GB', 'Droid Sans Fallback', 'Microsoft YaHei';
+        --base-font-family: 'LXGW WenKai', 'Lato', var(--sys-font-family), var(--zh-font-family), sans-serif;
+        --code-font-family: MapleMonoNF, 'LXGW WenKai', Menlo, Monaco, Consolas, 'Courier New', var(--zh-font-family),
+            monospace;
+    }
+
+     
+    .highlight {
+        font-size: 0.9em;
+    }
+
+     
+    .caption {
+        color: gray;
+        font-size: 0.8em;
+    }
+
+    .article-content .gallery {
+        margin: 0;
+        width: 100%;
+    }
+
+     
+    .menu-social li {
+        margin-right: 0.4em;
+    }
+
+     
+    .has-image .article-details:not(:has(.article-time)) {
+        background: unset !important;
+        background-color: rgba(0, 0, 0, 0.3) !important;
+    }
+
+     
+    .has-image:has(.article-header) {
+        border: 1px solid gray;
+    }
+
+    .article-subtitle {
+        font-size: 1em;
+        margin-top: 1em;
+    }
+
+     
+    .related-content article .article-title {
+        font-size: 1em;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    .article-page .main-article .article-header .article-details {
+        padding-bottom: 25px;
+    }
+</style>
+<script>
+    class FriendlyLink extends HTMLElement {
+        connectedCallback() {
+            const shadow = this.attachShadow({mode: 'open'});
+
+            const src = this.getAttribute('src') || undefined;
+            const title = this.getAttribute('title') || undefined;
+            const description = this.getAttribute('desc') || undefined;
+
+            shadow.innerHTML = `<style>
+                .friend-link-card {
+                    background-color: var(--card-bg-color);
+                    border-radius: 8px;
+                    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+                    transition:
+                        transform 0.2s ease,
+                        box-shadow 0.2s ease;
+                    overflow: hidden;
+                }
+
+                .friend-link-card:hover {
+                    transform: translateY(-5px);
+                    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+                }
+
+                .friend-link-card a {
+                    text-decoration: none;
+                    color: inherit;
+                    display: block;
+                    padding: 15px;
+                }
+
+                .friend-link-info {
+                    padding: 10px 0;
+                }
+
+                .friend-link-name {
+                    margin: 0;
+                    font-size: 1.2em;
+                    color: var(--card-title-color);
+                }
+
+                .friend-link-description {
+                    margin: 5px 0 0;
+                    font-size: 0.9em;
+                    color: var(--card-text-color);
+                }
+            </style>
+            <div class="friend-link-card">
+                <a href="${src}" target="_blank" rel="noopener noreferrer">
+                    <div class="friend-link-info">
+                    <h3 class="friend-link-name">${title}</h3>
+                    <p class="friend-link-description">${description}</p>
+                    </div>
+                </a>
+            </div>`;
+        }
+    }
+
+    customElements.define('friendly-link', FriendlyLink);
+
+</script>
+
+    </head>
+    <body class="
+    article-page
+    ">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "light");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex on-phone--column extended"><aside class="sidebar left-sidebar sticky ">
+    <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="切换菜单">
+        <span class="hamburger-box">
+            <span class="hamburger-inner"></span>
+        </span>
+    </button>
+
+    <header>
+        
+            
+            <figure class="site-avatar">
+                <a href="/blog/">
+                
+                    
+                    
+                    
+                        
+                        <img src="/blog/images/avatar_hu_966116bbcfed5fa1.jpg" width="300"
+                            height="300" class="site-logo" loading="lazy" alt="Avatar">
+                    
+                
+                </a>
+                
+                    <span class="emoji">🍥</span>
+                
+            </figure>
+            
+        
+        
+        <div class="site-meta">
+            <h1 class="site-name"><a href="/blog">codersgl&#39;s blog</a></h1>
+            <h2 class="site-description">Imagination is the source of all motivation.</h2>
+        </div>
+    </header><ol class="menu-social">
+            
+                <li>
+                    <a 
+                        href='https://github.com/codersgl'
+                        target="_blank"
+                        title="GitHub 主页"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-github" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M9 19c-4.3 1.4 -4.3 -2.5 -6 -3m12 5v-3.5c0 -1 .1 -1.4 -.5 -2c2.8 -.3 5.5 -1.4 5.5 -6a4.6 4.6 0 0 0 -1.3 -3.2a4.2 4.2 0 0 0 -.1 -3.2s-1.1 -.3 -3.5 1.3a12.3 12.3 0 0 0 -6.2 0c-2.4 -1.6 -3.5 -1.3 -3.5 -1.3a4.2 4.2 0 0 0 -.1 3.2a4.6 4.6 0 0 0 -1.3 3.2c0 4.6 2.7 5.7 5.5 6c-.6 .6 -.6 1.2 -.5 2v3.5" />
+</svg>
+
+
+
+                        
+                    </a>
+                </li>
+            
+                <li>
+                    <a 
+                        href='/blog/index.xml'
+                        
+                        title="RSS 订阅"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-rss" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="5" cy="19" r="1" />
+  <path d="M4 4a16 16 0 0 1 16 16" />
+  <path d="M4 11a9 9 0 0 1 9 9" />
+</svg>
+
+
+
+                        
+                    </a>
+                </li>
+            
+        </ol><ol class="menu" id="main-menu">
+        
+        
+        
+        <li >
+            <a href='/blog/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-home" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <polyline points="5 12 3 12 12 3 21 12 19 12" />
+  <path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7" />
+  <path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6" />
+</svg>
+
+
+
+                
+                <span>首页</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/blog/page/archives' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-archive" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <rect x="3" y="4" width="18" height="4" rx="2" />
+  <path d="M5 8v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-10" />
+  <line x1="10" y1="12" x2="14" y2="12" />
+</svg>
+
+
+
+                
+                <span>归档</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/blog/page/links' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-link" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M10 14a3.5 3.5 0 0 0 5 0l4 -4a3.5 3.5 0 0 0 -5 -5l-.5 .5" />
+  <path d="M14 10a3.5 3.5 0 0 0 -5 0l-4 4a3.5 3.5 0 0 0 5 5l.5 -.5" />
+</svg>
+
+
+
+                
+                <span>友链</span>
+            </a>
+        </li>
+        
+        <li class="menu-bottom-section">
+            <ol class="menu">
+
+                
+                    <li id="dark-mode-toggle">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="8" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="16" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <span>暗色模式</span>
+                    </li>
+                
+            </ol>
+        </li>
+    </ol>
+</aside>
+
+    <aside class="sidebar right-sidebar sticky">
+        
+            
+                <form action="/blog/page/search/" class="search-form widget" >
+        <p>
+            <label>搜索</label>
+            <input name="keyword" required autocomplete="off" placeholder="输入关键词..." />
+        
+            <button title="搜索">
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-search" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="10" cy="10" r="7" />
+  <line x1="21" y1="21" x2="15" y2="15" />
+</svg>
+
+
+
+            </button>
+        </p>
+    </form>
+            
+        
+            
+                
+    <section class="widget archives">
+        <div class="widget-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <line x1="5" y1="9" x2="19" y2="9" />
+  <line x1="5" y1="15" x2="19" y2="15" />
+  <line x1="11" y1="4" x2="7" y2="20" />
+  <line x1="17" y1="4" x2="13" y2="20" />
+</svg>
+
+
+
+        </div>
+        <h2 class="widget-title section-title">目录</h2>
+        
+        <div class="widget--toc">
+            <nav id="TableOfContents">
+  <ul>
+    <li><a href="#rust是一门怎样的编程语言">Rust是一门怎样的编程语言?</a></li>
+    <li><a href="#rust是如何实现安全可靠的内存管理的">Rust是如何实现安全可靠的内存管理的？</a>
+      <ul>
+        <li><a href="#所有权机制">所有权机制</a>
+          <ul>
+            <li><a href="#rust-中的每一个值都有一个-所有者owner">Rust 中的每一个值都有一个 所有者（owner）。</a></li>
+            <li><a href="#值在任一时刻有且只有一个所有者">值在任一时刻有且只有一个所有者。</a></li>
+            <li><a href="#当所有者离开作用域这个值将被丢弃">当所有者离开作用域，这个值将被丢弃。</a></li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+        </div>
+    </section>
+
+            
+        
+            
+                <section class="widget tagCloud">
+    <div class="widget-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <line x1="5" y1="9" x2="19" y2="9" />
+  <line x1="5" y1="15" x2="19" y2="15" />
+  <line x1="11" y1="4" x2="7" y2="20" />
+  <line x1="17" y1="4" x2="13" y2="20" />
+</svg>
+
+
+
+    </div>
+    <h2 class="widget-title section-title">分类</h2>
+
+    <div class="tagCloud-tags">
+        
+            <a href="/blog/categories/jotting/" class="font_size_1">
+                Jotting
+            </a>
+        
+            <a href="/blog/categories/tools/" class="font_size_1">
+                Tools
+            </a>
+        
+            <a href="/blog/categories/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/" class="font_size_1">
+                深度学习
+            </a>
+        
+    </div>
+</section>
+
+            
+        
+            
+                <section class="widget tagCloud">
+    <div class="widget-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-tag" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M11 3L20 12a1.5 1.5 0 0 1 0 2L14 20a1.5 1.5 0 0 1 -2 0L3 11v-4a4 4 0 0 1 4 -4h4" />
+  <circle cx="9" cy="9" r="2" />
+</svg>
+
+
+
+    </div>
+    <h2 class="widget-title section-title">标签云</h2>
+
+    <div class="tagCloud-tags">
+        
+            <a href="/blog/tags/c/c&#43;&#43;/">
+                C/C&#43;&#43;
+            </a>
+        
+            <a href="/blog/tags/faster-r-cnn/">
+                Faster R-CNN
+            </a>
+        
+            <a href="/blog/tags/neovim/">
+                Neovim
+            </a>
+        
+            <a href="/blog/tags/pytorch/">
+                PyTorch
+            </a>
+        
+            <a href="/blog/tags/rust/">
+                Rust
+            </a>
+        
+            <a href="/blog/tags/%E7%9B%AE%E6%A0%87%E6%A3%80%E6%B5%8B/">
+                目标检测
+            </a>
+        
+            <a href="/blog/tags/%E7%AE%97%E6%B3%95%E5%A4%8D%E7%8E%B0/">
+                算法复现
+            </a>
+        
+            <a href="/blog/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E8%A7%86%E8%A7%89/">
+                计算机视觉
+            </a>
+        
+    </div>
+</section>
+
+            
+        
+    </aside>
+
+
+            <main class="main full-width">
+    <article class="has-image main-article">
+    <header class="article-header">
+        <div class="article-image">
+            <a href="/blog/posts/geting_to_know_rust/">
+                <img src="/blog/posts/geting_to_know_rust/cover.png"
+                        
+                        width="1536" 
+                        height="1024" 
+                        loading="lazy"
+                        alt="Featured image of post 初识Rust" />
+                
+            </a>
+        </div>
+    
+
+    <div class="article-details">
+    
+
+    <div class="article-title-wrapper">
+        <h2 class="article-title">
+            <a href="/blog/posts/geting_to_know_rust/">初识Rust</a>
+        </h2>
+    
+        
+    </div>
+
+    
+    
+    
+    
+    <footer class="article-time">
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
+  <circle cx="18" cy="18" r="4" />
+  <path d="M15 3v4" />
+  <path d="M7 3v4" />
+  <path d="M3 11h16" />
+  <path d="M18 16.496v1.504l1 1" />
+</svg>
+                <time class="article-time--published" datetime='2026-01-21T23:13:14&#43;08:00'>Jan 21, 2026</time>
+            </div>
+        
+
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+                <time class="article-time--reading">
+                    阅读时长: 4 分钟
+                </time>
+            </div>
+        
+    </footer>
+    
+
+    
+</div>
+
+</header>
+
+    <section class="article-content">
+    
+    
+    <h2 id="rust是一门怎样的编程语言">Rust是一门怎样的编程语言?
+</h2><p>Rust是一门系统编程语言，像C一样接近系统底层，同时也是一门编译型语言，速度能和C媲美。而Rust最大的特点是其严格的内存管理方式，它不像其他高级语言一样拥有<code>GC</code>机制来管理内存，也不想<code>C/C++</code>一样容易因为手动管理内存而导致内存泄露和<code>double free</code>的问题。</p>
+<blockquote>
+<p><strong>GC（Garbage Collection，垃圾回收）</strong>： 是一种自动内存管理机制。它存在于许多高级编程语言（如 Java, C#, Python, Go,JavaScript等）的运行时环境中，其核心任务是：自动识别并释放程序中不再使用的内存（即“垃圾”），交还给系统，防止内存泄漏。</p>
+<p><strong>为什么需要 GC？</strong></p>
+<p>在像 C/C++ 这样的语言中，程序员必须手动管理内存：用 malloc/new 申请，用 free/delete释放。这带来了两个主要问题：</p>
+<ol>
+<li>内存泄漏：忘记释放内存，导致内存被持续占用，最终可能耗尽。</li>
+<li>悬空指针野指针：释放了内存后，又继续使用指向该内存的指针，导致程序崩溃或数据错误。</li>
+</ol>
+<p>GC通过自动化这个过程，将程序员从复杂且易错的手动内存管理中解放出来，提高了开发效率和程序的健壮性。</p>
+</blockquote>
+<h2 id="rust是如何实现安全可靠的内存管理的">Rust是如何实现安全可靠的内存管理的？
+</h2><h3 id="所有权机制">所有权机制
+</h3><p>所有权机制是<code>Rust</code>实现内存管理的核心, 所有权机制主要用与管理堆上的数据，而这里就要理解<strong>堆</strong>和<strong>栈</strong>的概念。</p>
+<ul>
+<li>栈：先进后出的数据结构，存放在栈中的数据必须是已知且固定的大小，直接寻址。</li>
+<li>堆：堆是缺乏组织的，在堆上分配内存时，操作系统会找到一块足够大的空闲空间，标记为已用，并返回一个指针。分配速度较慢，且需要通过指针间接访问，间接寻址。</li>
+</ul>
+<p>首先，让我们看一下所有权的规则。当我们通过举例说明时，请谨记这些规则：</p>
+<blockquote>
+<ol>
+<li>Rust 中的每一个值都有一个 所有者（owner）。</li>
+<li>值在任一时刻有且只有一个所有者。</li>
+<li>当所有者离开作用域，这个值将被丢弃。</li>
+</ol>
+</blockquote>
+<h4 id="rust-中的每一个值都有一个-所有者owner">Rust 中的每一个值都有一个 所有者（owner）。
+</h4><p>首先，观察下面的一个例子。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-rust" data-lang="rust"><span class="line"><span class="cl"><span class="k">fn</span> <span class="nf">main</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="kd">let</span><span class="w"> </span><span class="n">s1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">String</span>::<span class="n">from</span><span class="p">(</span><span class="s">&#34;hello&#34;</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="kd">let</span><span class="w"> </span><span class="n">s2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">s1</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="fm">println!</span><span class="p">(</span><span class="s">&#34;</span><span class="si">{s1}</span><span class="s">, world&#34;</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">}</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p>这段代码首先创建一个不可变的字符串<code>s1</code>，然后将<code>s1</code>赋值给<code>s2</code>，最后打印一个和<code>s1</code>拼接的字符串。
+在其他语言中这样的做法完全没有问题，但是在<code>rust</code>中这是不合法的行为，第一次创建<code>s1</code>时就表示<code>s1</code>对字符串<code>&quot;hello</code>有所有权，
+当其赋值给<code>s2</code>时表示它将其对<code>&quot;hello</code>的所有权转交给<code>s2</code>。</p>
+<p>从内存的角度来看，传统的编程语言在这种情形会将指向<code>&quot;hello</code>的指针复制一份
+给<code>s2</code>这叫<strong>浅拷贝</strong>，而<code>rust</code>则会在复制的同时将<code>s1</code>的指针给删除掉，在<code>rust</code>的中这种行为叫做<strong>移动</strong>。</p>
+<p>这就能解释为什么上面的
+代码是不合法的了，因为当<code>s1</code>赋值给<code>s2</code>后，<code>s1</code>的指针就被删除了，再次试图访问<code>s1</code>自然就会报错。</p>
+<p>从报错信息也可以给看出，出错的原因在于借用了已经移动的值
+<code>Compiling learn_rust v0.1.0 (/home/codersgl/study/learn_rust) error[E0382]: borrow of moved value: </code>s1``。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-text" data-lang="text"><span class="line"><span class="cl">➜  learn_rust git:(master) ✗ cargo run
+</span></span><span class="line"><span class="cl">   Compiling learn_rust v0.1.0 (/home/codersgl/study/learn_rust)
+</span></span><span class="line"><span class="cl">error[E0382]: borrow of moved value: `s1`
+</span></span><span class="line"><span class="cl"> --&gt; src/main.rs:4:16
+</span></span><span class="line"><span class="cl">  |
+</span></span><span class="line"><span class="cl">2 |     let s1 = String::from(&#34;hello&#34;);
+</span></span><span class="line"><span class="cl">  |         -- move occurs because `s1` has type `String`, which does not implement the `Copy` trait
+</span></span><span class="line"><span class="cl">3 |     let s2 = s1;
+</span></span><span class="line"><span class="cl">  |              -- value moved here
+</span></span><span class="line"><span class="cl">4 |     println!(&#34;{s1}, world&#34;);
+</span></span><span class="line"><span class="cl">  |                ^^ value borrowed here after move
+</span></span><span class="line"><span class="cl">  |
+</span></span><span class="line"><span class="cl">  = note: this error originates in the macro `$crate::format_args_nl` which comes from the expansion of the macro `println` (in Nightly
+</span></span><span class="line"><span class="cl"> builds, run with -Z macro-backtrace for more info)
+</span></span><span class="line"><span class="cl">help: consider cloning the value if the performance cost is acceptable
+</span></span><span class="line"><span class="cl">  |
+</span></span><span class="line"><span class="cl">3 |     let s2 = s1.clone();
+</span></span><span class="line"><span class="cl">  |                ++++++++
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">warning: unused variable: `s2`
+</span></span><span class="line"><span class="cl"> --&gt; src/main.rs:3:9
+</span></span><span class="line"><span class="cl">  |
+</span></span><span class="line"><span class="cl">3 |     let s2 = s1;
+</span></span><span class="line"><span class="cl">  |         ^^ help: if this is intentional, prefix it with an underscore: `_s2`
+</span></span><span class="line"><span class="cl">  |
+</span></span><span class="line"><span class="cl">  = note: `#[warn(unused_variables)]` (part of `#[warn(unused)]`) on by default
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">For more information about this error, try `rustc --explain E0382`.
+</span></span><span class="line"><span class="cl">warning: `learn_rust` (bin &#34;learn_rust&#34;) generated 1 warning
+</span></span><span class="line"><span class="cl">error: could not compile `learn_rust` (bin &#34;learn_rust&#34;) due to 1 previous error; 1 warning emitted
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h4 id="值在任一时刻有且只有一个所有者">值在任一时刻有且只有一个所有者。
+</h4><p><code>rust</code>的这种特性，能有效避免<code>double free</code>。正如上面的例子，如果一个值同时拥有<code>s1</code>和<code>s2</code>两个所有者的话，当释放完<code>s1</code>的内存后，如果不小心
+试图释放<code>s2</code>的内存就会导致<code>double free</code>，而<code>rust</code>从机制上规避了这种情况。</p>
+<h4 id="当所有者离开作用域这个值将被丢弃">当所有者离开作用域，这个值将被丢弃。
+</h4><p>每当变量的所有者离开作用域后其值对应的内存地址会被自动释放，这时<code>rust</code>会自动调用一个名为<code>drop</code>的函数来释放内存。</p>
+
+</section>
+
+
+    <footer class="article-footer">
+    
+    <section class="article-tags">
+        
+            <a href="/blog/tags/rust/">Rust</a>
+        
+    </section>
+
+
+    
+    <section class="article-copyright">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copyright" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <path d="M14.5 9a3.5 4 0 1 0 0 6" />
+</svg>
+
+
+
+        <span>Licensed under CC BY-NC-SA 4.0</span>
+    </section>
+    </footer>
+
+
+    
+</article>
+
+    
+
+    
+
+     
+    
+        
+    <script src='https://unpkg.com/@waline/client@v2/dist/waline.js'></script>
+<link href='https://unpkg.com/@waline/client@v2/dist/waline.css' rel='stylesheet'/>
+
+<div id="waline-template"></div>
+<style>
+    .waline-container {
+        background-color: var(--card-background);
+        border-radius: var(--card-border-radius);
+        box-shadow: var(--shadow-l1);
+        padding: var(--card-padding);
+        --waline-font-size: var(--article-font-size);
+    }
+    .waline-container .wl-count {
+        color: var(--card-text-color-main);
+    }
+</style><script>
+    let classifier = window.location.pathname.replace(/\/$/, '');
+    if (classifier.indexOf('/blog/posts') == 0) {
+        let _waline_container = document.querySelector('#waline-template');
+        _waline_container.id = 'waline';
+        _waline_container.className = 'waline-container';
+
+        
+        let _waline_config = {"dark":"html[data-scheme=\"dark\"]","el":"#waline","emoji":["https://cdn.jsdelivr.net/gh/walinejs/emojis/bmoji","https://cdn.jsdelivr.net/gh/walinejs/emojis/bilibili","https://cdn.jsdelivr.net/gh/walinejs/emojis/tieba"],"imageUploader":false,"lang":"zh-CN","locale":{"admin":"Admin","placeholder":null},"requiredMeta":["nick","mail"],"serverURL":"https://comment.shaobin-jiang.com"};
+        _waline_config.path = classifier;
+        Waline.init(_waline_config);
+    }
+</script>
+
+    
+
+    
+<footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+        2026 codersgl&#39;s blog
+    </section>
+    
+    <section class="powerby">
+        
+    </section>
+</footer>
+
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css"crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css"crossorigin="anonymous"
+            >
+    
+
+            </main>
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.6/dist/vibrant.min.js"integrity="sha256-awcR2jno4kI5X0zL8ex0vi2z&#43;KMkF24hUW8WePSA9HM="crossorigin="anonymous"
+                
+                >
+            </script><script type="text/javascript" src="/blog/ts/main.0db9d3bb15612717eccfcda01bdb204577ec88d4b25414e101d6a0c6df939201.js" defer></script>
+
+
+    </body>
+</html>

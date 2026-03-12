@@ -1346,6 +1346,147 @@ Estimated Total Size (MB): 7725.59
 
 模型基本搞定了，接下来就是要修改一些输入的问题，因为网络要同时接受`x_dino, x_sam, x`三个输入，因此数据加载部分可能需要修改。
 
+--- 
+**2025/1/12**
+
+好久没整了，不行了必须得开整了。继续改代码...
+
+1. 修改`SHHA.py`文件中的`__getitem__`方法添加`dino_imgs`和`sam_imgs`。
+
+```python
+class SHHA(Dataset):
+    def __init__(self, data_root, transform=None, train=False, patch=False, flip=False):
+        self.root_path = data_root
+        self.train_lists = "train.txt"
+        self.eval_list = "test.txt"
+        self.gt_density = "gt_density_maps"
+        self.img_list_file = self.train_lists.split(",")
+
+        self.resize_dino = torchvision.transforms.Resize((518, 518))
+        self.resize_sam = torchvision.transforms.Resize((352, 352))
+
+    def __getitem__(self, index):
+        ...
+        # Resize img
+        img_dino = self.resize_dino(img)
+        img_sam = self.resize_sam(img)
+
+        if self.train:
+            return img_dino, img_sam, img, target, density_images
+        else:
+            return img_dino, img_sam, img, target
+```
+
+2. 修改`util/misc.py`更新和数据加载相关的文件。 
+
+```python
+def collate_fn_crowd(batch):
+    batch_new = []
+    for b in batch:
+        dino_imgs, sam_imgs, imgs, points = b
+
+        if imgs.ndim == 3:
+            imgs = imgs.unsqueeze(0)
+        if dino_imgs.ndim == 3:
+            dino_imgs = dino_imgs.unsqueeze(0)
+        if sam_imgs.ndim == 3:
+            sam_imgs = sam_imgs.unsqueeze(0)
+
+        for i in range(len(imgs)):
+            batch_new.append(
+                (
+                    dino_imgs[i, :, :, :],
+                    sam_imgs[i, :, :, :],
+                    imgs[i, :, :, :],
+                    points[i],
+                )
+            )
+    batch = batch_new
+    batch = list(zip(*batch))
+    batch[0] = nested_tensor_from_tensor_list(batch[0], size_divisiblility=14)
+    batch[1] = nested_tensor_from_tensor_list(batch[1], size_divisiblility=32)
+    batch[2] = nested_tensor_from_tensor_list(batch[2], size_divisiblility=128)
+    return tuple(batch)
+
+
+def collate_fn_crowd_train(batch):
+    batch_new = []
+    for b in batch:
+        dino_imgs, sam_imgs, imgs, points, density = b
+
+        if imgs.ndim == 3:
+            imgs = imgs.unsqueeze(0)
+        if dino_imgs.ndim == 3:
+            dino_imgs = dino_imgs.unsqueeze(0)
+        if sam_imgs.ndim == 3:
+            sam_imgs = sam_imgs.unsqueeze(0)
+
+        if density.ndim == 3:
+            density = density.unsqueeze(0)
+        for i in range(len(imgs)):
+            batch_new.append(
+                (
+                    dino_imgs[i, :, :, :],
+                    sam_imgs[i, :, :, :],
+                    imgs[i, :, :, :],
+                    points[i],
+                    density[i, :, :, :],
+                )
+            )
+    batch = batch_new
+    batch = list(zip(*batch))
+    batch[0] = nested_tensor_from_tensor_list(batch[0], size_divisiblility=14)
+    batch[1] = nested_tensor_from_tensor_list(batch[1], size_divisiblility=32)
+    batch[2] = nested_tensor_from_tensor_list(batch[2], size_divisiblility=128)
+    return tuple(batch)
+
+
+def _max_by_axis(the_list):
+    maxes = the_list[0]
+    for sublist in the_list[1:]:
+        for index, item in enumerate(sublist):
+            maxes[index] = max(maxes[index], item)
+    return maxes
+
+
+def _max_by_axis_pad(the_list, block=128):
+    maxes = the_list[0]
+    for sublist in the_list[1:]:
+        for index, item in enumerate(sublist):
+            maxes[index] = max(maxes[index], item)
+
+    for i in range(2):
+        maxes[i + 1] = ((maxes[i + 1] - 1) // block + 1) * block
+    return maxes
+
+
+def nested_tensor_from_tensor_list(tensor_list: List[Tensor], size_divisiblility=128):
+    if tensor_list[0].ndim == 3:
+        max_size = _max_by_axis_pad(
+            [list(img.shape) for img in tensor_list], block=size_divisiblility
+        )
+        batch_shape = [len(tensor_list)] + max_size
+        b, c, h, w = batch_shape
+        dtype = tensor_list[0].dtype
+        device = tensor_list[0].device
+        tensor = torch.zeros(batch_shape, dtype=dtype, device=device)
+        for img, pad_img in zip(tensor_list, tensor):
+            pad_img[: img.shape[0], : img.shape[1], : img.shape[2]].copy_(img)
+    else:
+        raise ValueError("not supported")
+    return tensor
+```
+
+3. 修改`engine.py`中的`train_one_epoch`和`evaluate_crowd_no_overlap`, 以支持新的输入。
+
+```python
+for X_dino, X_sam, samples, targets, gt_dmap in data_loader:
+        X_dino, X_sam, samples = X_dino.to(device), X_sam.to(device), samples.to(device)
+```
+
+本地显存不够，合并到主仓库在服务器上改吧。
+
+
 ## 跑代码
 
 ## 写论文
