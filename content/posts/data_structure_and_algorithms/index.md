@@ -19,3 +19,10 @@ Place the elements by using a group of consecutive memory address.
   * Difficult to add and remove the element of sequence list.
 
 ### Link list
+
+Place the elements by using some random memory address, but every element has
+data and pointer that point to the address of next element.
+
+* features:
+  * Easy to add and move the elements of link list.
+  * Difficult to access and modify the elements of link list.
