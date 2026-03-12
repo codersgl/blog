@@ -1,7 +1,7 @@
 +++
 date = '2026-03-12T22:27:38+08:00'
 draft = false
-title = 'Data_structure_and_algorithms'
+title = 'Data structure and algorithms'
 +++
 
 ## Linear list
