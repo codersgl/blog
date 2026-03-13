@@ -1,6 +1,6 @@
 +++
 date = '2026-03-13T20:51:24+08:00'
-draft = true
+draft = false
 title = 'Operating system'
 +++
 
@@ -18,5 +18,5 @@ title = 'Operating system'
 
 ### Modularization
 
-Modularization means splits the operating system to some independent modules by
-functions.
+Modularization means splitting the operating system into some independent
+modules by functions.

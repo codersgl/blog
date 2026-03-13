@@ -6,7 +6,35 @@
         <description>Recent content on codersgl&#39;s blog</description>
         <generator>Hugo -- gohugo.io</generator>
         <language>zh-Hans</language>
-        <lastBuildDate>Thu, 12 Mar 2026 22:27:38 +0800</lastBuildDate><atom:link href="https://codersgl.github.io/blog/index.xml" rel="self" type="application/rss+xml" /><item>
+        <lastBuildDate>Fri, 13 Mar 2026 20:51:24 +0800</lastBuildDate><atom:link href="https://codersgl.github.io/blog/index.xml" rel="self" type="application/rss+xml" /><item>
+        <title>Operating system</title>
+        <link>https://codersgl.github.io/blog/posts/operating_system/</link>
+        <pubDate>Fri, 13 Mar 2026 20:51:24 +0800</pubDate>
+        
+        <guid>https://codersgl.github.io/blog/posts/operating_system/</guid>
+        <description>&lt;h2 id=&#34;the-structure-of-operating-system&#34;&gt;The structure of operating system
+&lt;/h2&gt;&lt;h3 id=&#34;hierarchy&#34;&gt;Hierarchy
+&lt;/h3&gt;&lt;ul&gt;
+&lt;li&gt;Advantage
+&lt;ol&gt;
+&lt;li&gt;Convenient for the OS to debug and valid, simplify the
+design and implementation of the system.&lt;/li&gt;
+&lt;li&gt;Easy to extend and maintain.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/li&gt;
+&lt;li&gt;Disadvantage
+&lt;ol&gt;
+&lt;li&gt;Low efficiency&lt;/li&gt;
+&lt;li&gt;Difficult to define the layer reasonably.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id=&#34;modularization&#34;&gt;Modularization
+&lt;/h3&gt;&lt;p&gt;Modularization means splitting the operating system into some independent
+modules by functions.&lt;/p&gt;
+</description>
+        </item>
+        <item>
         <title>Data structure and algorithms</title>
         <link>https://codersgl.github.io/blog/posts/data_structure_and_algorithms/</link>
         <pubDate>Thu, 12 Mar 2026 22:27:38 +0800</pubDate>
