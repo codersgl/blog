@@ -2,16 +2,16 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
     <channel>
         <title>codersgl&#39;s blog</title>
-        <link>http://localhost:1313/blog/</link>
+        <link>https://codersgl.github.io/blog/</link>
         <description>Recent content on codersgl&#39;s blog</description>
         <generator>Hugo -- gohugo.io</generator>
         <language>zh-Hans</language>
-        <lastBuildDate>Thu, 12 Mar 2026 22:27:38 +0800</lastBuildDate><atom:link href="http://localhost:1313/blog/index.xml" rel="self" type="application/rss+xml" /><item>
+        <lastBuildDate>Thu, 12 Mar 2026 22:27:38 +0800</lastBuildDate><atom:link href="https://codersgl.github.io/blog/index.xml" rel="self" type="application/rss+xml" /><item>
         <title>Data structure and algorithms</title>
-        <link>http://localhost:1313/blog/posts/data_structure_and_algorithms/</link>
+        <link>https://codersgl.github.io/blog/posts/data_structure_and_algorithms/</link>
         <pubDate>Thu, 12 Mar 2026 22:27:38 +0800</pubDate>
         
-        <guid>http://localhost:1313/blog/posts/data_structure_and_algorithms/</guid>
+        <guid>https://codersgl.github.io/blog/posts/data_structure_and_algorithms/</guid>
         <description>&lt;h2 id=&#34;linear-list&#34;&gt;Linear list
 &lt;/h2&gt;&lt;p&gt;Consecutive elements of the same type are limited in number, and every middle
 element in the sequence has exactly one element immediately before it and one
@@ -129,11 +129,11 @@ node, then making the target node point to None.&lt;/p&gt;
         </item>
         <item>
         <title>VSCode中配置C/C&#43;&#43;运行和调试环境</title>
-        <link>http://localhost:1313/blog/posts/config_c_language_in_vscode/</link>
+        <link>https://codersgl.github.io/blog/posts/config_c_language_in_vscode/</link>
         <pubDate>Tue, 06 Jan 2026 17:52:23 +0800</pubDate>
         
-        <guid>http://localhost:1313/blog/posts/config_c_language_in_vscode/</guid>
-        <description>&lt;img src="http://localhost:1313/blog/posts/config_c_language_in_vscode/cover.jpeg" alt="《VSCode中配置C/C&#43;&#43;运行和调试环境》封面图" /&gt;&lt;p&gt;首先配置C/C++的插件，然后执行&lt;code&gt;Ctrl+Shift+B&lt;/code&gt;执行生成任务，注意此时焦点一定要将待执行的文件上，否则会报错。&lt;/p&gt;
+        <guid>https://codersgl.github.io/blog/posts/config_c_language_in_vscode/</guid>
+        <description>&lt;img src="https://codersgl.github.io/blog/posts/config_c_language_in_vscode/cover.jpeg" alt="《VSCode中配置C/C&#43;&#43;运行和调试环境》封面图" /&gt;&lt;p&gt;首先配置C/C++的插件，然后执行&lt;code&gt;Ctrl+Shift+B&lt;/code&gt;执行生成任务，注意此时焦点一定要将待执行的文件上，否则会报错。&lt;/p&gt;
 &lt;p&gt;修改生成的&lt;code&gt;task.json&lt;/code&gt;&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
 &lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
@@ -278,11 +278,11 @@ node, then making the target node point to None.&lt;/p&gt;
         </item>
         <item>
         <title>一个艰难的决定</title>
-        <link>http://localhost:1313/blog/posts/a_hard_decision/</link>
+        <link>https://codersgl.github.io/blog/posts/a_hard_decision/</link>
         <pubDate>Tue, 06 Jan 2026 00:07:21 +0800</pubDate>
         
-        <guid>http://localhost:1313/blog/posts/a_hard_decision/</guid>
-        <description>&lt;img src="http://localhost:1313/blog/posts/a_hard_decision/cover.jpg" alt="《一个艰难的决定》封面图" /&gt;&lt;p&gt;从今天起，我打算放弃折腾&lt;code&gt;neovim&lt;/code&gt;了。当然并不是说&lt;code&gt;neovim&lt;/code&gt;不好，相反它很好，无需鼠标，仅用键盘作为输入的唯一操作方式，这是非一般的体验。我也一直希望能把它作为我的主力编辑器使用，唯一的缺点是配置太繁琐了，不管是LSP，还是Lazygit都折腾的我头大。除此之外，浩如烟海的快捷键实在是太难记了，每种插件都有一堆快捷键，每个插件都有自定义的配置，感觉以我现在的水平还不足以驾驭它，因此先将其搁置一边，专心敲代码趴。但&lt;code&gt;Vim&lt;/code&gt;模式还是很香的，我现在用Vscode作为主力编辑器，同时搭配&lt;code&gt;Vim&lt;/code&gt;插件，说实话体验还不赖，就是不能像&lt;code&gt;neovim&lt;/code&gt;一样用键盘掌控一切，其实理论上可行，但还需要学习一些&lt;code&gt;Vscode&lt;/code&gt;的快捷键，有点烦，有点乱。&lt;/p&gt;
+        <guid>https://codersgl.github.io/blog/posts/a_hard_decision/</guid>
+        <description>&lt;img src="https://codersgl.github.io/blog/posts/a_hard_decision/cover.jpg" alt="《一个艰难的决定》封面图" /&gt;&lt;p&gt;从今天起，我打算放弃折腾&lt;code&gt;neovim&lt;/code&gt;了。当然并不是说&lt;code&gt;neovim&lt;/code&gt;不好，相反它很好，无需鼠标，仅用键盘作为输入的唯一操作方式，这是非一般的体验。我也一直希望能把它作为我的主力编辑器使用，唯一的缺点是配置太繁琐了，不管是LSP，还是Lazygit都折腾的我头大。除此之外，浩如烟海的快捷键实在是太难记了，每种插件都有一堆快捷键，每个插件都有自定义的配置，感觉以我现在的水平还不足以驾驭它，因此先将其搁置一边，专心敲代码趴。但&lt;code&gt;Vim&lt;/code&gt;模式还是很香的，我现在用Vscode作为主力编辑器，同时搭配&lt;code&gt;Vim&lt;/code&gt;插件，说实话体验还不赖，就是不能像&lt;code&gt;neovim&lt;/code&gt;一样用键盘掌控一切，其实理论上可行，但还需要学习一些&lt;code&gt;Vscode&lt;/code&gt;的快捷键，有点烦，有点乱。&lt;/p&gt;
 &lt;p&gt;总之，事情就是这样，我暂时放弃折腾&lt;code&gt;neovim&lt;/code&gt;，专心完成手上一些重要的工作，顺便水一篇博客。顺带一提，写这篇博客时还顺便学了下&lt;code&gt;gj&lt;/code&gt;和&lt;code&gt;gk&lt;/code&gt;可以实现视觉折行内的上下切换，蒸蚌！！!。&lt;/p&gt;
 &lt;blockquote&gt;
 &lt;p&gt;BTW，折腾&lt;code&gt;neovim&lt;/code&gt;真好玩！！！&lt;/p&gt;
