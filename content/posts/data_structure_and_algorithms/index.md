@@ -45,11 +45,38 @@ relationship with each other.
 
 #### The operation of data
 
+## Algorithm
+
+Algorithm is a description of solving steps for special problems. It has five features:
+
+1. Finiteness
+2. Certainty
+3. Feasibility
+4. Input
+5. Output
+
+### The metric of Algorithm efficiency
+
+1. Time Complexity
+
+2. Spatial Complexity
+
 ## Linear list
 
 Consecutive elements of the same type are limited in number, and every middle
 element in the sequence has exactly one element immediately before it and one
 element immediately after it.
+
+### Base operation of linear list
+
+* `InitList(&L)`: Initialize a list.
+* `Length(L)`: Get the length of a list, the number of list elements.
+* `LocalElem(L, e)`: Find by value.
+* `GetElem(L, i)`: Find by index.
+* `ListInsert(&L, i, e)`: Insert specified value e at the `i-th` element of
+list L.
+* `ListDelete(&L, i, &e)`: Delete the `i-th` element of list L, and return its
+value to e.
 
 ### sequence list
 

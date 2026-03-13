@@ -389,8 +389,14 @@
         </li>
       </ul>
     </li>
+    <li><a href="#algorithm">Algorithm</a>
+      <ul>
+        <li><a href="#the-metric-of-algorithm-efficiency">The metric of Algorithm efficiency</a></li>
+      </ul>
+    </li>
     <li><a href="#linear-list">Linear list</a>
       <ul>
+        <li><a href="#base-operation-of-linear-list">Base operation of linear list</a></li>
         <li><a href="#sequence-list">sequence list</a></li>
         <li><a href="#linked-list">Linked list</a>
           <ul>
@@ -587,10 +593,39 @@ relationship with each other.</p>
 <li>Hash storage</li>
 </ul>
 <h4 id="the-operation-of-data">The operation of data
-</h4><h2 id="linear-list">Linear list
+</h4><h2 id="algorithm">Algorithm
+</h2><p>Algorithm is a description of solving steps for special problems. It has five features:</p>
+<ol>
+<li>Finiteness</li>
+<li>Certainty</li>
+<li>Feasibility</li>
+<li>Input</li>
+<li>Output</li>
+</ol>
+<h3 id="the-metric-of-algorithm-efficiency">The metric of Algorithm efficiency
+</h3><ol>
+<li>
+<p>Time Complexity</p>
+</li>
+<li>
+<p>Spatial Complexity</p>
+</li>
+</ol>
+<h2 id="linear-list">Linear list
 </h2><p>Consecutive elements of the same type are limited in number, and every middle
 element in the sequence has exactly one element immediately before it and one
 element immediately after it.</p>
+<h3 id="base-operation-of-linear-list">Base operation of linear list
+</h3><ul>
+<li><code>InitList(&amp;L)</code>: Initialize a list.</li>
+<li><code>Length(L)</code>: Get the length of a list, the number of list elements.</li>
+<li><code>LocalElem(L, e)</code>: Find by value.</li>
+<li><code>GetElem(L, i)</code>: Find by index.</li>
+<li><code>ListInsert(&amp;L, i, e)</code>: Insert specified value e at the <code>i-th</code> element of
+list L.</li>
+<li><code>ListDelete(&amp;L, i, &amp;e)</code>: Delete the <code>i-th</code> element of list L, and return its
+value to e.</li>
+</ul>
 <h3 id="sequence-list">sequence list
 </h3><p>Place the elements by using a group of consecutive memory address.</p>
 <ul>
