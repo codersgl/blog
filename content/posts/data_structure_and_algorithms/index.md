@@ -4,6 +4,19 @@ draft = false
 title = 'Data structure and algorithms'
 +++
 
+## Base Concept of Data Structure
+
+### Data Element
+
+**Data element** is the basic unit of data, every data element
+has some **Data Items**, which are the minimal units that consist of
+**Data element**
+
+### Data Structure
+
+Data structure is a set of data elements which have one or more special
+relationship with each other.
+
 ## Linear list
 
 Consecutive elements of the same type are limited in number, and every middle
