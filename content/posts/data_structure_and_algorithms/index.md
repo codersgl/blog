@@ -34,7 +34,7 @@ c = b[0] # Get the first element of the list b.
 
 But note to it doesn't make sure every element own same type in Python.
 
-### Link list
+### Linked list
 
 Place the elements by using some random memory address, but every element has
 data and pointer that point to the address of next element.
@@ -57,3 +57,38 @@ head = Node(1) # 1 -> None
 head.next = Node(2) # 1 -> 2 -> None
 head.next.next = Node(3) # 1 -> 2 -> 3 -> None
 ```
+
+#### Doubly Linked List
+
+Every node includes two points: one pointer points to the previous node and
+another points to next node.
+
+#### Circular Linked List
+
+The pointer of last node points to the first node, making a circular, it could be
+single direction or double direction.
+
+#### Insert Node
+
+1. Head Insert
+The pointer of new node points to head node, head pointer points to new node.
+
+2. Rear Insert
+Traverse to find the last node, making it point to new node.
+
+3. Middle Insert
+Find the target node, new node points to its next node, target node points to
+new node.
+
+#### Remove Node
+
+1. Remove Head Node
+Head pointer points to the next node of head node, making it new head node, original
+head node points to None.
+
+2. Remove Rear Node
+Find the previous node of rear node, making it point to None.
+
+3. Remove Middle Node
+Find the previous node of target node, making it point to the next node of target
+node, then making the target node point to None.
