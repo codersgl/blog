@@ -20,7 +20,53 @@ has some &lt;strong&gt;Data Items&lt;/strong&gt;, which are the minimal units th
 &lt;h3 id=&#34;data-structure&#34;&gt;Data Structure
 &lt;/h3&gt;&lt;p&gt;Data structure is a set of data elements which have one or more special
 relationship with each other.&lt;/p&gt;
-&lt;h2 id=&#34;linear-list&#34;&gt;Linear list
+&lt;h4 id=&#34;the-logical-structure-of-data&#34;&gt;The logical structure of data
+&lt;/h4&gt;&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;Linear&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Normal linear list&lt;/li&gt;
+&lt;li&gt;Restricted linear list
+&lt;ul&gt;
+&lt;li&gt;Stack and Queue&lt;/li&gt;
+&lt;li&gt;String&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;Extended linear list
+&lt;ul&gt;
+&lt;li&gt;Array&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Nonlinear&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Set&lt;/li&gt;
+&lt;li&gt;Tree
+&lt;ul&gt;
+&lt;li&gt;Normal tree&lt;/li&gt;
+&lt;li&gt;Binary tree&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;Graph
+&lt;ul&gt;
+&lt;li&gt;Directed graph&lt;/li&gt;
+&lt;li&gt;Undirected graph&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4 id=&#34;the-storage-structure-of-data&#34;&gt;The storage structure of data
+&lt;/h4&gt;&lt;ul&gt;
+&lt;li&gt;Ordered storage&lt;/li&gt;
+&lt;li&gt;Linked storage&lt;/li&gt;
+&lt;li&gt;Index storage&lt;/li&gt;
+&lt;li&gt;Hash storage&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4 id=&#34;the-operation-of-data&#34;&gt;The operation of data
+&lt;/h4&gt;&lt;h2 id=&#34;linear-list&#34;&gt;Linear list
 &lt;/h2&gt;&lt;p&gt;Consecutive elements of the same type are limited in number, and every middle
 element in the sequence has exactly one element immediately before it and one
 element immediately after it.&lt;/p&gt;

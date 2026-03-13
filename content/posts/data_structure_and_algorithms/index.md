@@ -17,6 +17,34 @@ has some **Data Items**, which are the minimal units that consist of
 Data structure is a set of data elements which have one or more special
 relationship with each other.
 
+#### The logical structure of data
+
+* Linear
+  * Normal linear list
+  * Restricted linear list
+    * Stack and Queue
+    * String
+  * Extended linear list
+    * Array
+
+* Nonlinear
+  * Set
+  * Tree
+    * Normal tree
+    * Binary tree
+  * Graph
+    * Directed graph
+    * Undirected graph
+
+#### The storage structure of data
+
+* Ordered storage
+* Linked storage
+* Index storage
+* Hash storage
+
+#### The operation of data
+
 ## Linear list
 
 Consecutive elements of the same type are limited in number, and every middle
