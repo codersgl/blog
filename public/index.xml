@@ -95,15 +95,15 @@ single direction or double direction.&lt;/p&gt;
 &lt;h4 id=&#34;insert-node&#34;&gt;Insert Node
 &lt;/h4&gt;&lt;ol&gt;
 &lt;li&gt;
-&lt;p&gt;Head Insert
+&lt;p&gt;Head Insert:
 The pointer of new node points to head node, head pointer points to new node.&lt;/p&gt;
 &lt;/li&gt;
 &lt;li&gt;
-&lt;p&gt;Rear Insert
+&lt;p&gt;Rear Insert:
 Traverse to find the last node, making it point to new node.&lt;/p&gt;
 &lt;/li&gt;
 &lt;li&gt;
-&lt;p&gt;Middle Insert
+&lt;p&gt;Middle Insert:
 Find the target node, new node points to its next node, target node points to
 new node.&lt;/p&gt;
 &lt;/li&gt;
@@ -111,16 +111,16 @@ new node.&lt;/p&gt;
 &lt;h4 id=&#34;remove-node&#34;&gt;Remove Node
 &lt;/h4&gt;&lt;ol&gt;
 &lt;li&gt;
-&lt;p&gt;Remove Head Node
+&lt;p&gt;Remove Head Node:
 Head pointer points to the next node of head node, making it new head node, original
 head node points to None.&lt;/p&gt;
 &lt;/li&gt;
 &lt;li&gt;
-&lt;p&gt;Remove Rear Node
+&lt;p&gt;Remove Rear Node:
 Find the previous node of rear node, making it point to None.&lt;/p&gt;
 &lt;/li&gt;
 &lt;li&gt;
-&lt;p&gt;Remove Middle Node
+&lt;p&gt;Remove Middle Node:
 Find the previous node of target node, making it point to the next node of target
 node, then making the target node point to None.&lt;/p&gt;
 &lt;/li&gt;

@@ -70,25 +70,25 @@ single direction or double direction.
 
 #### Insert Node
 
-1. Head Insert
+1. Head Insert:
 The pointer of new node points to head node, head pointer points to new node.
 
-2. Rear Insert
+2. Rear Insert:
 Traverse to find the last node, making it point to new node.
 
-3. Middle Insert
+3. Middle Insert:
 Find the target node, new node points to its next node, target node points to
 new node.
 
 #### Remove Node
 
-1. Remove Head Node
+1. Remove Head Node:
 Head pointer points to the next node of head node, making it new head node, original
 head node points to None.
 
-2. Remove Rear Node
+2. Remove Rear Node:
 Find the previous node of rear node, making it point to None.
 
-3. Remove Middle Node
+3. Remove Middle Node:
 Find the previous node of target node, making it point to the next node of target
 node, then making the target node point to None.
