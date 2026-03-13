@@ -55,7 +55,7 @@ data and pointer that point to the address of next element.&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;features:
 &lt;ul&gt;
-&lt;li&gt;Easy to add and move the elements of link list.&lt;/li&gt;
+&lt;li&gt;Easy to add and remove the elements of link list.&lt;/li&gt;
 &lt;li&gt;Difficult to access and modify the elements of link list.&lt;/li&gt;
 &lt;/ul&gt;
 &lt;/li&gt;

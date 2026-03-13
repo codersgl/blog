@@ -40,7 +40,7 @@ Place the elements by using some random memory address, but every element has
 data and pointer that point to the address of next element.
 
 * features:
-  * Easy to add and move the elements of link list.
+  * Easy to add and remove the elements of link list.
   * Difficult to access and modify the elements of link list.
 
 In Python, you need to define a node class to implement the function of link
