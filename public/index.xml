@@ -88,16 +88,19 @@ relationship with each other.&lt;/p&gt;
 &lt;/h2&gt;&lt;p&gt;Consecutive elements of the same type are limited in number, and every middle
 element in the sequence has exactly one element immediately before it and one
 element immediately after it.&lt;/p&gt;
-&lt;h3 id=&#34;base-operation-of-linear-list&#34;&gt;Base operation of linear list
+&lt;h3 id=&#34;base-operations-of-linear-list&#34;&gt;Base operations of linear list
 &lt;/h3&gt;&lt;ul&gt;
 &lt;li&gt;&lt;code&gt;InitList(&amp;amp;L)&lt;/code&gt;: Initialize a list.&lt;/li&gt;
 &lt;li&gt;&lt;code&gt;Length(L)&lt;/code&gt;: Get the length of a list, the number of list elements.&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;LocalElem(L, e)&lt;/code&gt;: Find by value.&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;LocateElem(L, e)&lt;/code&gt;: Find by value.&lt;/li&gt;
 &lt;li&gt;&lt;code&gt;GetElem(L, i)&lt;/code&gt;: Find by index.&lt;/li&gt;
 &lt;li&gt;&lt;code&gt;ListInsert(&amp;amp;L, i, e)&lt;/code&gt;: Insert specified value e at the &lt;code&gt;i-th&lt;/code&gt; element of
 list L.&lt;/li&gt;
 &lt;li&gt;&lt;code&gt;ListDelete(&amp;amp;L, i, &amp;amp;e)&lt;/code&gt;: Delete the &lt;code&gt;i-th&lt;/code&gt; element of list L, and return its
 value to e.&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;PrintList(L)&lt;/code&gt;: Print all elements in list L.&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;Empty(L)&lt;/code&gt;: Returns &lt;code&gt;ture&lt;/code&gt; if the list L is empty, otherwise returns &lt;code&gt;false&lt;/code&gt;.&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;DestroyList(&amp;amp;L)&lt;/code&gt;: Free the memory of list L.&lt;/li&gt;
 &lt;/ul&gt;
 &lt;h3 id=&#34;sequence-list&#34;&gt;sequence list
 &lt;/h3&gt;&lt;p&gt;Place the elements by using a group of consecutive memory address.&lt;/p&gt;

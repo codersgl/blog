@@ -67,16 +67,19 @@ Consecutive elements of the same type are limited in number, and every middle
 element in the sequence has exactly one element immediately before it and one
 element immediately after it.
 
-### Base operation of linear list
+### Base operations of linear list
 
 * `InitList(&L)`: Initialize a list.
 * `Length(L)`: Get the length of a list, the number of list elements.
-* `LocalElem(L, e)`: Find by value.
+* `LocateElem(L, e)`: Find by value.
 * `GetElem(L, i)`: Find by index.
 * `ListInsert(&L, i, e)`: Insert specified value e at the `i-th` element of
 list L.
 * `ListDelete(&L, i, &e)`: Delete the `i-th` element of list L, and return its
 value to e.
+* `PrintList(L)`: Print all elements in list L.
+* `Empty(L)`: Returns `ture` if the list L is empty, otherwise returns `false`.
+* `DestroyList(&L)`: Free the memory of list L.
 
 ### sequence list
 
